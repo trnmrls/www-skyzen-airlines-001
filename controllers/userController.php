@@ -33,7 +33,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
 
     $userManagement->addUserFunc($email, $firstName, $middleIn, $lastName, $phoneNum, $birthday, $username, $password, $rolesID);
     
-    $name = htmlspecialchars("SkyZen Airlines"); 
+    $name = $name = $firstName . ' ' . $lastName; 
     $email = filter_var($email, FILTER_SANITIZE_EMAIL); 
 
     if (!$email) {
