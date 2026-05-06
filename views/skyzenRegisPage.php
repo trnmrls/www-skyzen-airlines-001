@@ -51,10 +51,10 @@
                         </div>
                     </div>
                     
-                    <div class="form-group form-col" style="flex: 0.8;">
-                        <label class="form-label">M.I.</label>
+                    <div class="form-group form-col" style="flex: 2;">
+                        <label class="form-label">Middle Name</label>
                         <div class="input-group">
-                            <input type="text" id="regmiddleName" class="form-control" placeholder="M.I." maxlength="5" required>
+                            <input type="text" id="regmiddleName" class="form-control" placeholder="Middle Name" maxlength="30">
                         </div>
                     </div>
 
@@ -111,6 +111,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group form-col">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
+                        <input type="password" id="regConfirmPassword" class="form-control" maxlength="15" placeholder="Repeat your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePass('regConfirmPassword')"><i class="fa-solid fa-eye" id="eyeIcon2"></i></button>
+                    </div>
+                </div>
+            </div>
 
                 <div class="form-check">
                     <input type="checkbox" id="terms" required>
