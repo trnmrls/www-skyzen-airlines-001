@@ -87,7 +87,7 @@
                         <label class="form-label">Birthday</label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-cake-candles"></i></div>
-                            <input type="date" id="regBirthday" class="form-control" required style="padding-right: 14px;">
+                            <input type="date" id="regBirthday" class="form-control" required style="padding-right: 14px;" max="<?= date('Y-m-d') ?>">
                         </div>
                     </div>
                 </div>
