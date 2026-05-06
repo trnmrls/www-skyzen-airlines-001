@@ -12,7 +12,7 @@ class UserManagement {
     }
 
 public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNum, $birthday, $username, $password, $rolesID = 2) {
-        try {
+        try { 
             if ($this->regsModel->getUserByEmail($email)) {
                 http_response_code(400); 
                 echo "This email is already registered. Please use a different email.";

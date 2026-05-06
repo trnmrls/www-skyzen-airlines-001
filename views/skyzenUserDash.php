@@ -13,7 +13,7 @@ if ((int)$_SESSION['user']['rolesID'] !== 2) {
     exit;
 }
 
-try {
+try { 
     $pdo    = (new Database())->connect();
     $userID = (int)$_SESSION['user']['usersID'];
 

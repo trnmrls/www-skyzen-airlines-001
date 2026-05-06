@@ -8,7 +8,7 @@ $config = require __DIR__ . '/../config/mail.php';
 
 function sendEmail($toEmail, $toName, $subject, $body) {
     global $config; 
-
+ 
     $mail = new PHPMailer(true);
 
     try {

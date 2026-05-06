@@ -4,7 +4,7 @@ class RegistrationModel {
 
     public function __construct($db) {
         $this->conn = $db;
-    }
+    } 
 
     public function createRegistration($email, $fName, $middleName, $lName, $phoneNum, $birthday, $username, $hashedPassword, $rolesID = 2): bool {
         $query = "INSERT INTO tbl_users

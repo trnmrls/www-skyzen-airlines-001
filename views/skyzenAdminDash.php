@@ -9,7 +9,7 @@
 
     $userManagement = new UserManagement();
     $usersList = $userManagement->getUser(); 
-    
+     
     $dashStats = $userManagement->getDashboardStats();
 
     $chartData = $userManagement->getChartData();

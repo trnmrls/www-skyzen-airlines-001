@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.remove("fa-eye-slash");
             icon.classList.add("fa-eye");
         }
-    }
+    } 
 
     function loginAdminFunc() {
         let username = $('#users_username').val();

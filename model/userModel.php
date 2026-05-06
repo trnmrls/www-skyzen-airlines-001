@@ -4,8 +4,7 @@ class UserModel {
 
     public function __construct($conn) {
         $this->conn = $conn;
-    }
-
+    } 
    
 public function createUser ($fName, $middleName, $lName, $email, $phoneNum, $birthday, $username, $password) {
 $createQuery = "INSERT INTO tbl_users

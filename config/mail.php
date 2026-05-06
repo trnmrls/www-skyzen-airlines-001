@@ -7,5 +7,5 @@ return [
     'encryption' => 'tls',
     'from email' => 'airlinesskyzen@gmail.com',
     'from_name' => 'SkyZen Airlines'
-];
+]; 
 ?>

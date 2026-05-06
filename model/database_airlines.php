@@ -4,7 +4,7 @@ class Database {
     private $port = "3307";
     private $dbname = "airlines_db";
     private $username = "root";
-    private $password = "";
+    private $password = ""; 
     public function connect(): PDO {
         try {
             $conn = new PDO(
