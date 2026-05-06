@@ -21,7 +21,7 @@ CREATE TABLE `tbl_countries` (
     `countries_createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `countries_updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
+ 
 CREATE TABLE `tbl_aircrafts` (
     `aircraftsID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `aircraftsNum` VARCHAR(50) NOT NULL UNIQUE, 
