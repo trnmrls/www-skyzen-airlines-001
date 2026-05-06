@@ -117,9 +117,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    if (payload.users_password.length < 8) {
-        Swal.fire({ icon: 'warning', title: 'Weak Password', text: 'Password must be at least 8 characters long.' });
+    var confirmPassword = $('#regConfirmPassword').val();
+    var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*_)[A-Za-z\d_]{8,}$/;
+    if (!passwordPattern.test(payload.users_password)) {
+        Swal.fire({ 
+            icon: 'warning', 
+            title: 'Weak Password', 
+            text: 'Password must be at least 8 characters long and MUST contain a mix of letters, numbers, and an underscore (_).' 
+        });
         return;
+    }
+    if (payload.users_password !== confirmPassword) {
+        Swal.fire({ 
+            icon: 'warning', 
+            title: 'Passwords Mismatch', 
+            text: 'Your passwords do not match. Please re-type them carefully!' 
+        });
+        return; 
     }
 
     $.ajax({
