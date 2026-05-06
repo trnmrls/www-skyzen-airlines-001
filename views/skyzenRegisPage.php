@@ -112,6 +112,7 @@
                     </div>
                 </div>
 
+                <div class="form-row">
                 <div class="form-group form-col">
                     <label class="form-label">Confirm Password</label>
                     <div class="input-group">
