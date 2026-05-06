@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 $config = require __DIR__ . '/../config/mail.php';
 
 function sendEmail($toEmail, $toName, $subject, $body) {
-    global $config;
+    global $config; 
 
     $mail = new PHPMailer(true);
 
