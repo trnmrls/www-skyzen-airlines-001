@@ -31,7 +31,7 @@ if (isset($_SESSION['user'])) {
         </div>
         
         <h1>Welcome to SkyZen</h1>
-        <p class="brand-sub">Modern airline reservation system providing exceptional flight experiences globally.</p>
+        <p class="brand-sub">Airline Reservation System for SkyZen Airlines Admins</p>
         
         <div class="feature-list">
             <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> Secure Authentication</div>
