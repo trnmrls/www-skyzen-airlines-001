@@ -27,9 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function togglePass() {
-        var x = document.getElementById("regPassword");
-        var icon = document.getElementById("eyeIcon");
+    function togglePass(inputId, iconId) {
+        var x = document.getElementById(inputId);
+        var icon = document.getElementById(iconId);
+        
         if (x.type === "password") {
             x.type = "text";
             icon.classList.remove("fa-eye");
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.remove("fa-eye-slash");
             icon.classList.add("fa-eye");
         }
-    } 
+    }
 
     function loginAdminFunc() {
         let username = $('#users_username').val();

@@ -107,7 +107,8 @@
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
                             <input type="password" id="regPassword" class="form-control" maxlength="15" placeholder="Create a password" required>
-                            <button type="button" class="toggle-password" onclick="togglePass()"><i class="fa-solid fa-eye" id="eyeIcon"></i></button>
+                            <button type="button" class="toggle-password" onclick="togglePass('regPassword', 'eyeIcon1')">
+                                <i class="fa-solid fa-eye" id="eyeIcon1"></i></button>
                         </div>
                     </div>
                 </div>
@@ -118,10 +119,11 @@
                     <div class="input-group">
                         <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
                         <input type="password" id="regConfirmPassword" class="form-control" maxlength="15" placeholder="Repeat your password" required>
-                        <button type="button" class="toggle-password" onclick="togglePass()"><i class="fa-solid fa-eye" id="eyeIcon"></i></button>
+                        
+                        <button type="button" class="toggle-password" onclick="togglePass('regConfirmPassword', 'eyeIcon2')">
+                            <i class="fa-solid fa-eye" id="eyeIcon2"></i>
+                        </button>
                     </div>
-                </div>
-            </div>
 
                 <div class="form-check">
                     <input type="checkbox" id="terms" required>
