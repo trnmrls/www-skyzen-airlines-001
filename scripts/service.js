@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({ 
             icon: 'warning', 
             title: 'Weak Password', 
-            text: 'Password must be at least 8 characters long and MUST contain a mix of letters, numbers, and an underscore (_).' 
+            text: 'Password must be at least 8 characters long and MUST contain a mix of small and capital letters, numbers, and an underscore (_).' 
         });
         return;
     }
