@@ -27,6 +27,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function openTP() {
+        document.getElementById('tpModal').style.display = 'flex';
+        // Reset progress in case they reopen it
+        setTimeout(() => { checkTPScroll(document.getElementById('tpContentArea')); }, 100);
+    }
+
+    function checkTPScroll(el) {
+        // Calculate how far they have scrolled (0 to 100)
+        let scrollPosition = el.scrollTop;
+        let maxScroll = el.scrollHeight - el.clientHeight;
+        let scrollPercentage = (scrollPosition / maxScroll) * 100;
+        
+        // Safety fallback for very short screens
+        if (maxScroll <= 0) scrollPercentage = 100;
+
+        // Update the visual progress bar width
+        document.getElementById('tpProgressBar').style.width = scrollPercentage + '%';
+
+        // Once they hit the bottom (using 99 to forgive minor pixel rounding errors)
+        if (scrollPercentage >= 99) {
+            let btn = document.getElementById('tpAcceptBtn');
+            let checkbox = document.getElementById('termsCheck');
+            
+            // Auto-check the main form box!
+            checkbox.checked = true;
+            checkbox.disabled = false;
+            
+            // Update the button UI
+            btn.disabled = false;
+            btn.style.background = 'var(--theme-green)';
+            btn.style.cursor = 'pointer';
+            btn.innerHTML = "<i class='fa fa-check'></i> Terms Accepted - Close Window";
+            
+            document.getElementById('tpEndMessage').innerHTML = "Thank you. You may now close this window.";
+        }
+    }
+
+    function acceptTP() {
+        document.getElementById('tpModal').style.display = 'none';
+    }
+
     function togglePass(inputId, iconId) {
         var x = document.getElementById(inputId);
         var icon = document.getElementById(iconId);
