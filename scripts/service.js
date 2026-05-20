@@ -100,38 +100,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
 
-    function passInput() {
-        const passInput = document.getElementById('regPassword');
+    function checkPasswordReqs(val) {
+        // 1. Minimum 8 characters
+        toggleRequirement('req-length', val.length >= 8);
+        
+        // 2. Contains at least 1 uppercase letter
+        toggleRequirement('req-upper', /[A-Z]/.test(val));
+        
+        // 3. Contains at least 1 lowercase letter
+        toggleRequirement('req-lower', /[a-z]/.test(val));
+        
+        // 4. Contains at least 1 number
+        toggleRequirement('req-number', /[0-9]/.test(val));
+        
+        // 5. Contains an underscore (_)
+        toggleRequirement('req-special', /_/.test(val));
+    }
 
-        if (passInput) {
-            // 'input' fires instantly every single time a key is pressed, deleted, or pasted!
-            passInput.addEventListener('input', function() {
-                const val = this.value;
-                
-                // 1. Minimum 8 characters
-                toggleRequirement('req-length', val.length >= 8);
-                
-                // 2. Contains at least 1 uppercase letter
-                toggleRequirement('req-upper', /[A-Z]/.test(val));
-                
-                // 3. Contains at least 1 lowercase letter
-                toggleRequirement('req-lower', /[a-z]/.test(val));
-                
-                // 4. Contains at least 1 number
-                toggleRequirement('req-number', /[0-9]/.test(val));
-                
-                // 5. Contains an underscore (Matching your SweetAlert rules)
-                toggleRequirement('req-special', /_/.test(val));
-            });
-        }
-    };
-
+    // Helper function that swaps the Orange X to a Green Checkmark
     function toggleRequirement(elementId, isValid) {
         const el = document.getElementById(elementId);
         if (el) {
             const icon = el.querySelector('i');
             if (isValid) {
-                el.classList.add('valid'); // Triggers the Green CSS
+                el.classList.add('valid'); // Triggers Green CSS
                 icon.classList.remove('fa-xmark');
                 icon.classList.add('fa-check'); // Changes icon to Check
             } else {

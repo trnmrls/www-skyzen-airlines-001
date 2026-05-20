@@ -243,7 +243,7 @@
                         <label class="form-label">Password <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
-                            <input type="password" id="regPassword" class="form-control" maxlength="15" placeholder="Create a password" required>
+                            <input type="password" id="regPassword" class="form-control" maxlength="15" placeholder="Create a password" oninput="checkPasswordReqs(this.value)" required>
                             <button type="button" class="toggle-password" onclick="togglePass('regPassword', 'eyeIcon1')">
                                 <i class="fa-solid fa-eye" id="eyeIcon1"></i>
                             </button>

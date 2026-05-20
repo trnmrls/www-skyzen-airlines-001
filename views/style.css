@@ -435,9 +435,11 @@ body {
 
 .form-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
 }
-.form-col { flex: 1; }
+.form-col { 
+    flex: 1; 
+}
 
 .toggle-password {
     background: none;
@@ -665,17 +667,17 @@ body {
 /* --- DYNAMIC PASSWORD CHECKLIST (COMPACT & ALIGNED) --- */
 .password-reqs {
     list-style: none !important;
-    margin: 5px 0 5px 5px !important;
-    align-items: right !important;
+    padding: 0 !important;
+    margin: 5px 0 10px 0px !important; 
 }
 
 .password-reqs li {
     color: #F97316 !important; /* Starts as a bold UI Orange */
-    font-size: 9px !important; /* Small, compact text */
+    font-size: 11px !important; 
     line-height: 1 !important; 
     display: flex !important;
-    align-items: right;
-    gap: 3px !important;
+    align-items: center !important; 
+    gap: 6px !important;
     transition: color 0.2s ease !important;
 }
 
