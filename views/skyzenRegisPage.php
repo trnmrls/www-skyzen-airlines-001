@@ -18,14 +18,17 @@
 <body>
     <div id="tpModal" class="tp-modal-overlay">
         <div class="tp-modal">
+            <button type="button" class="tp-close-btn" onclick="closeTP()">
+                <i class="fa fa-times"></i>
+            </button>
             <h3 style="margin-top:0; margin-bottom:5px; color: var(--nav-dark);">Legal Framework & Privacy Policy</h3>
             
             <div class="tp-progress-container">
                 <div class="tp-progress-bar" id="tpProgressBar"></div>
             </div>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Please scroll to the bottom to automatically accept.</p>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Please read Terms & Conditions and Privacy Policy before you accept.</p>
             
-            <div class="tp-content" id="tpContentArea" onscroll="checktpScroll(this)">
+            <div class="tp-content" id="tpContentArea" onscroll="checkTPScroll(this)"> 
                 <p>
                     <strong>Welcome to SkyZen Airlines.</strong>
                         These legal frameworks outline your passenger rights, booking provisions, code of conduct, and privacy protection protocols when utilizing our online portal, booking engines, and onboard services. By accessing our platform, registering an account, or purchasing a ticket, you explicitly enter into a binding contractual agreement with SkyZen Airlines.
@@ -145,15 +148,11 @@
                 <p>
                     SkyZen Airlines reserves the right to modify these regulatory Terms and Privacy Policies at any time to reflect changing international aviation safety standards or updated technical frameworks. When significant adjustments are made, a prominent update alert will be deployed across the primary user dashboard, and a notice will be sent to your registered email address. Continued engagement with our booking system or boarding services after such notifications constitutes complete acceptance of the updated terms.
                 </p>
-                
-                    <br>
-                <br>
-                <!-- separate the style -->
-                <p style="text-align: center; color: var(--theme-green); font-weight: bold;" id="tpEndMessage">Scroll to the very bottom to accept.</p><br><br>
+            <button id="tpAcceptBtn" class="btn-premium" disabled onclick="acceptTP()"><i class='fa fa-check'></i> I hereby accept the Terms and Conditions.</button>
+
             </div>
 
             <!-- separate the style -->            
-            <button id="tpAcceptBtn" class="btn-premium" style="margin-top:10px; background: #94A3B8; cursor: not-allowed;" disabled onclick="accepttp()">Reading Required...</button>
         </div>
     </div>
 
@@ -179,34 +178,34 @@
             <h2>Create Account</h2>
             <p class="subtitle">Fill in the details to get started</p>
 
-            <form onsubmit="event.preventDefault(); registerUserFunc();">
+    <form onsubmit="event.preventDefault(); registerUserFunc();">
                 
                 <div class="form-row">
-                    <div class="form-group form-col" style="flex: 2;">
-                        <label class="form-label">First Name</label>
+                    <div class="form-group form-col">
+                        <label class="form-label">First Name <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-user"></i></div>
                             <input type="text" id="regFirstName" class="form-control" maxlength="30" placeholder="First Name" required>
                         </div>
                     </div>
                     
-                    <div class="form-group form-col" style="flex: 2;">
+                    <div class="form-group form-col">
                         <label class="form-label">Middle Name</label>
                         <div class="input-group">
                             <input type="text" id="regmiddleName" class="form-control" placeholder="Middle Name" maxlength="30">
                         </div>
                     </div>
 
-                    <div class="form-group form-col" style="flex: 2;">
-                        <label class="form-label">Last Name</label>
+                    <div class="form-group form-col">
+                        <label class="form-label">Last Name <span class="req-mark">*</span></label>
                         <div class="input-group">
-                            <input type="text" id="regLastName" class="form-control" maxlength="30"placeholder="Last Name" required>
+                            <input type="text" id="regLastName" class="form-control" maxlength="30" placeholder="Last Name" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Email Address</label>
+                    <label class="form-label">Email Address <span class="req-mark">*</span></label>
                     <div class="input-group">
                         <div class="input-icon"><i class="fa-solid fa-envelope"></i></div>
                         <input type="email" id="regEmail" class="form-control" maxlength="30" placeholder="Enter your email" required>
@@ -215,15 +214,15 @@
 
                 <div class="form-row">
                     <div class="form-group form-col">
-                        <label class="form-label">Phone Number</label>
+                        <label class="form-label">Phone Number <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-phone"></i></div>
-                            <input type="text" id="regPhone" class="form-control" maxlength="15" placeholder="Phone Number" required>
+                            <input type="text" id="regPhone" class="form-control" maxlength="15" placeholder="Phone Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                         </div>
                     </div>
                     
                     <div class="form-group form-col">
-                        <label class="form-label">Birthday</label>
+                        <label class="form-label">Birthday <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-cake-candles"></i></div>
                             <input type="date" id="regBirthday" class="form-control" required style="padding-right: 14px;" max="<?= date('Y-m-d') ?>">
@@ -231,10 +230,9 @@
                     </div>
                 </div>
 
-
                 <div class="form-row">
                     <div class="form-group form-col">
-                        <label class="form-label">Username</label>
+                        <label class="form-label">Username <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-at"></i></div>
                             <input type="text" id="regUsername" class="form-control" maxlength="10" placeholder="Choose a username" required>
@@ -242,32 +240,44 @@
                     </div>
                     
                     <div class="form-group form-col">
-                        <label class="form-label">Password</label>
+                        <label class="form-label">Password <span class="req-mark">*</span></label>
                         <div class="input-group">
                             <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
                             <input type="password" id="regPassword" class="form-control" maxlength="15" placeholder="Create a password" required>
                             <button type="button" class="toggle-password" onclick="togglePass('regPassword', 'eyeIcon1')">
-                                <i class="fa-solid fa-eye" id="eyeIcon1"></i></button>
-                        </div>
+                                <i class="fa-solid fa-eye" id="eyeIcon1"></i>
+                            </button>
+
+                        </div>                            
+                            <ul class="password-reqs" id="password-reqs">
+                                <li id="req-length"><i class="fa-solid fa-xmark"></i> At least 8 characters</li>
+                                <li id="req-upper"><i class="fa-solid fa-xmark"></i> At least 1 uppercase letter</li>
+                                <li id="req-lower"><i class="fa-solid fa-xmark"></i> At least 1 lowercase letter</li>
+                                <li id="req-number"><i class="fa-solid fa-xmark"></i> At least 1 number</li>
+                                <li id="req-special"><i class="fa-solid fa-xmark"></i> At least 1 underscore (_)</li>
+                            </ul>
                     </div>
                 </div>
 
                 <div class="form-row">
-                <div class="form-group form-col">
-                    <label class="form-label">Confirm Password</label>
-                    <div class="input-group">
-                        <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
-                        <input type="password" id="regConfirmPassword" class="form-control" maxlength="15" placeholder="Repeat your password" required>
-                        
-                        <button type="button" class="toggle-password" onclick="togglePass('regConfirmPassword', 'eyeIcon2')">
-                            <i class="fa-solid fa-eye" id="eyeIcon2"></i>
-                        </button>
+                    <div class="form-group form-col">
+                        <label class="form-label">Confirm Password <span class="req-mark">*</span></label>
+                        <div class="input-group">
+                            <div class="input-icon"><i class="fa-solid fa-lock"></i></div>
+                            <input type="password" id="regConfirmPassword" class="form-control" maxlength="15" placeholder="Repeat your password" required>
+                            <button type="button" class="toggle-password" onclick="togglePass('regConfirmPassword', 'eyeIcon2')">
+                                <i class="fa-solid fa-eye" id="eyeIcon2"></i>
+                            </button>
+                        </div>
                     </div>
-
-                <div class="form-check">
-                    <input type="checkbox" id="terms" required>
-                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
                 </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="terms" required disabled>
+                        <label for="terms">I agree to the 
+                            <a href="javascript:void(0)" onclick="openTP()"><u>Terms of Service & Privacy Policy.</u>*</a>
+                        </label>
+                    </div>
 
                 <button type="submit" class="btn-submit">
                     <i class="fa-solid fa-user-plus"></i> Create Account

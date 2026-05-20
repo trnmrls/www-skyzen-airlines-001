@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
     setupAuthSwitcher();
-    togglePass();
+    if (typeof togglePass === 'function') {
+        togglePass();
+    }
+    if (document.getElementById('tpModal')) {
+        openTP();
+    }
 });
 
     function setupAuthSwitcher() {
@@ -34,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function checkTPScroll(el) {
-        // Calculate how far they have scrolled (0 to 100)
+        // Calculate how far they have scrolled
         let scrollPosition = el.scrollTop;
         let maxScroll = el.scrollHeight - el.clientHeight;
         let scrollPercentage = (scrollPosition / maxScroll) * 100;
@@ -45,27 +50,38 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the visual progress bar width
         document.getElementById('tpProgressBar').style.width = scrollPercentage + '%';
 
-        // Once they hit the bottom (using 99 to forgive minor pixel rounding errors)
+        // Once they hit the bottom, ONLY enable the button (Do NOT check the box yet)
         if (scrollPercentage >= 99) {
             let btn = document.getElementById('tpAcceptBtn');
-            let checkbox = document.getElementById('termsCheck');
             
-            // Auto-check the main form box!
-            checkbox.checked = true;
-            checkbox.disabled = false;
-            
-            // Update the button UI
+            // Unlock the Accept button
             btn.disabled = false;
-            btn.style.background = 'var(--theme-green)';
-            btn.style.cursor = 'pointer';
-            btn.innerHTML = "<i class='fa fa-check'></i> Terms Accepted - Close Window";
-            
-            document.getElementById('tpEndMessage').innerHTML = "Thank you. You may now close this window.";
+            btn.classList.add('accept-enabled');
+
+            document.getElementById('tpEndMessage').innerHTML = "You may now click Accept.";
         }
     }
 
     function acceptTP() {
+        let checkbox = document.getElementById('terms');
+        
+        // 1. Remove the 'disabled' lock so HTML5 validation works
+        checkbox.disabled = false;
+        
+        // 2. Automatically check the box!
+        checkbox.checked = true;
+        
+        // 3. Close the modal window
         document.getElementById('tpModal').style.display = 'none';
+
+        checkbox.onclick = function(e) {
+                e.preventDefault();
+                return false;
+            };
+    }
+
+    function closeTP() {
+    document.getElementById('tpModal').style.display = 'none';
     }
 
     function togglePass(inputId, iconId) {
@@ -80,6 +96,49 @@ document.addEventListener('DOMContentLoaded', function() {
             x.type = "password";
             icon.classList.remove("fa-eye-slash");
             icon.classList.add("fa-eye");
+        }
+    }
+    
+
+    function passInput() {
+        const passInput = document.getElementById('regPassword');
+
+        if (passInput) {
+            // 'input' fires instantly every single time a key is pressed, deleted, or pasted!
+            passInput.addEventListener('input', function() {
+                const val = this.value;
+                
+                // 1. Minimum 8 characters
+                toggleRequirement('req-length', val.length >= 8);
+                
+                // 2. Contains at least 1 uppercase letter
+                toggleRequirement('req-upper', /[A-Z]/.test(val));
+                
+                // 3. Contains at least 1 lowercase letter
+                toggleRequirement('req-lower', /[a-z]/.test(val));
+                
+                // 4. Contains at least 1 number
+                toggleRequirement('req-number', /[0-9]/.test(val));
+                
+                // 5. Contains an underscore (Matching your SweetAlert rules)
+                toggleRequirement('req-special', /_/.test(val));
+            });
+        }
+    };
+
+    function toggleRequirement(elementId, isValid) {
+        const el = document.getElementById(elementId);
+        if (el) {
+            const icon = el.querySelector('i');
+            if (isValid) {
+                el.classList.add('valid'); // Triggers the Green CSS
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-check'); // Changes icon to Check
+            } else {
+                el.classList.remove('valid'); // Reverts to Orange CSS
+                icon.classList.remove('fa-check');
+                icon.classList.add('fa-xmark'); // Changes icon back to X
+            }
         }
     }
 
@@ -318,16 +377,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const phonePattern = document.getElementById("txtPhoneNumber");
-            if (phonePattern) {
-                phonePattern.addEventListener("input", function() {
-                    allowOnlyNumber(this);
-                });
-            }
-
-            function allowOnlyNumber(element) {
-                element.value = element.value.replace(/[^0-9]/g, "");
-
+            var phonePattern = /^[0-9]{10,15}$/;
+            if (!phonePattern.test(payload.users_phoneNum)) {
+                Swal.fire({ icon: 'warning', title: 'Invalid Phone', text: 'Phone number must contain only numbers (10 to 15 digits).' });
+                return;
             }
 
             var inputDate = new Date(payload.users_birthday);
