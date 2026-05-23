@@ -1,3 +1,7 @@
+
+/* =======================================================
+   1. INITIALIZATION & GLOBAL LISTENERS
+======================================================= */
 document.addEventListener('DOMContentLoaded', function() {
     setupAuthSwitcher();
     if (typeof togglePass === 'function') {
@@ -8,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+/* =======================================================
+   2. AUTHENTICATION UI & MODAL LOGIC
+======================================================= */
     function setupAuthSwitcher() {
         document.querySelectorAll('[data-auth-switch]').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -99,7 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-
+/* =======================================================
+   3. DYNAMIC PASSWORD VALIDATOR (REAL-TIME)
+======================================================= */
     function checkPasswordReqs(val) {
         // 1. Minimum 8 characters
         toggleRequirement('req-length', val.length >= 8);
@@ -133,6 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+/* =======================================================
+   4. BACKEND API CALLS (Login & Register AJAX)
+======================================================= */
 
     function loginAdminFunc() {
         let username = $('#users_username').val();
@@ -269,7 +282,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-// charts    
+/* =======================================================
+   5. ADMIN DASHBOARD CHARTS (Chart.js)
+======================================================= */
     $(document).ready(function() {
         const themeGreen = '#008C4A';
         const themeRed = '#D9232D';
@@ -327,6 +342,10 @@ document.addEventListener('DOMContentLoaded', function() {
             pageLength: 10,
             responsive: true
         });
+
+/* =======================================================
+   6. ADMIN CRUD OPERATIONS (Edit, Update, Delete)
+======================================================= */
 
         function openEditForm(id, fname, lname, phone, email, birthday, username) {
             $('#edit_id').val(id);
@@ -446,3 +465,56 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     };
+
+// =======================================================
+// 7. CLIENT BOOKING ENGINE LOGIC (Homepage Interactions)
+// =======================================================
+/* =======================================================
+   7. CLIENT BOOKING ENGINE LOGIC (Homepage)
+======================================================= */
+function setTripType(type, element) {
+    document.querySelectorAll('.skyzen-tab').forEach(tab => tab.classList.remove('active'));
+    element.classList.add('active');
+
+    const returnGroup = document.getElementById('returnDateGroup');
+    const returnInput = document.getElementById('returnDate');
+
+    if (type === 'one') {
+        returnGroup.style.display = 'none';
+        returnInput.removeAttribute('required');
+        returnInput.value = '';
+    } else {
+        returnGroup.style.display = 'block';
+        returnInput.setAttribute('required', 'true');
+    }
+}
+
+function swapAirports() {
+    const originSelect = document.getElementById('searchOrigin');
+    const destSelect = document.getElementById('searchDest');
+    const tempOrigin = originSelect.value;
+    const tempDest = destSelect.value;
+
+    if(tempOrigin || tempDest) {
+        originSelect.value = tempDest;
+        destSelect.value = tempOrigin;
+    }
+}
+
+// Emulate the Hero Slider Array from the Reference Model
+document.addEventListener('DOMContentLoaded', function() {
+    const heroSection = document.getElementById('heroSlider');
+    if(heroSection) {
+        const images = [
+            'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop', // Default
+            'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=2000&auto=format&fit=crop', // Cebu
+            'https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=2070&auto=format&fit=crop'  // Iloilo
+        ];
+        let index = 0;
+        
+        setInterval(() => {
+            index = (index + 1) % images.length;
+            heroSection.style.backgroundImage = `url('${images[index]}')`;
+        }, 6000); // Rotates the hero image every 6 seconds
+    }
+});

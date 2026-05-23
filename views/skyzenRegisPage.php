@@ -174,7 +174,7 @@
     </div>
 
     <div class="nk-auth-form-panel">
-        <div class="auth-card" style="max-width: 550px;"> 
+        <div class="auth-card"> 
             <h2>Create Account</h2>
             <p class="subtitle">Fill in the details to get started</p>
 

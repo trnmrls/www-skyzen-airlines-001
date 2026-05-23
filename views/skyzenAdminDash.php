@@ -78,6 +78,9 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#"><i class="fa fa-home"></i> Dashboard</a></li>
+                        <li><a href="skyzenFlightsDash.php"><i class="fa fa-plane"></i> Flights</a></li>
+                        <li><a href="skyzenBookingsDash.php"><i class="fa fa-ticket"></i> Bookings</a></li>
+                        <li><a href="skyzenUsersDash.php"><i class="fa fa-users"></i> Users</a></li>
                     </ul>
                 </div>
             </div>

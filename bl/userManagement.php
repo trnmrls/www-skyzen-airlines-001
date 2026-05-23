@@ -227,4 +227,53 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
         }
     }
 }
+
+// MAIN PAGE - user side
+    function getAirports() {
+        try {
+            $db = (new Database())->connect();
+            $stmt = $db->query("SELECT * FROM tbl_airports ORDER BY airportsName ASC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $ex) {
+            return [];
+        }
+    }
+
+    // =======================================================
+    // CLIENT BOOKING ENGINE: FLIGHT SEARCH
+    // =======================================================
+    function searchAvailableFlights($origin, $dest, $date, $pax) {
+        try {
+            $db = (new Database())->connect();
+            
+            // We use DATE() to ignore the exact time and match only the calendar day.
+            // We also verify that flights_availSeats is greater than or equal to the requested passenger count.
+            $sql = "SELECT f.*, 
+                           a.aircraftsModel,
+                           orig.airportsName AS originName,
+                           dest.airportsName AS destName
+                    FROM tbl_flights f
+                    LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID
+                    LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode
+                    LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
+                    WHERE f.flights_originCode = :origin 
+                      AND f.flights_destinationCode = :dest 
+                      AND DATE(f.flights_departureTime) = :dep_date
+                      AND f.flights_availSeats >= :pax
+                    ORDER BY f.flights_basePrice ASC"; // Order by cheapest flight first
+            
+            $stmt = $db->prepare($sql);
+            $stmt->execute([
+                ':origin' => $origin,
+                ':dest' => $dest,
+                ':dep_date' => $date,
+                ':pax' => $pax
+            ]);
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $ex) {
+            // In a production environment, you might log $ex->getMessage() here.
+            return [];
+        }
+    }
 ?>
