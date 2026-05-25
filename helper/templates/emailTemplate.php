@@ -15,7 +15,18 @@
 	<meta https-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../views/style.css">
-
+	<style>
+        /* Responsiveness */
+        @media (max-width: 680px) {
+            .stack { width: 100% !important; }
+            .column { display: block !important; width: 100% !important; }
+            .mobile_hide { display: none !important; }
+            .nav-link { display: block !important; padding: 10px !important; }
+        }
+        .skyzen-nav { background: #ffffff; padding: 10px; border-bottom: 2px solid #007d9f; }
+        .nav-link { text-decoration: none; color: #007d9f; font-weight: 700; padding: 0 10px; }
+        .footer-col { vertical-align: top; padding: 10px; }
+    </style>
 </head>
 
 <body class="body" style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">

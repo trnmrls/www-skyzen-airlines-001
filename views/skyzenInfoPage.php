@@ -19,6 +19,53 @@
     if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
         $flights = $userManagement;
     }
+
+    $isLoggedIn = false;
+$myBookings = [];
+$firstName = '';
+
+// 2. Evaluate the user's session state safely
+if (isset($_SESSION['user'])) {
+    
+    // If an Admin accidentally navigates here, safely route them to their proper workspace
+    if ((int)$_SESSION['user']['rolesID'] === 1) {
+        header('Location: skyzenAdminDash.php');
+        exit;
+    }
+
+    // The user is a valid customer, so we update our application state
+    $isLoggedIn = true;
+    $firstName = htmlspecialchars($_SESSION['user']['users_firstName']);
+
+    // 3. Fetch the secure data ONLY because we verified the user's identity
+    try {
+        $pdo    = (new Database())->connect();
+        $userID = (int)$_SESSION['user']['usersID'];
+        
+        $stmt = $pdo->prepare("
+            SELECT b.bookings_pnrCode,
+                   b.bookings_amount,
+                   b.bookings_status,
+                   b.bookings_createdAt,
+                   f.flightsNum,
+                   f.flights_originCode,
+                   f.flights_destinationCode,
+                   f.flights_departureTime,
+                   f.flights_arrivalTime
+            FROM   tbl_bookings b
+            JOIN   tbl_tickets  t ON t.tickets_bookingsID = b.bookingsID
+            JOIN   tbl_flights  f ON f.flightsID = t.tickets_flightID
+            WHERE  b.usersID = :uid
+            ORDER  BY b.bookings_createdAt DESC
+        ");
+        $stmt->execute([':uid' => $userID]);
+        $myBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        // Graceful error handling in case the database connection fails
+        die("<p style='color:red;padding:20px'>Database Error: " . htmlspecialchars($e->getMessage()) . "</p>");
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,21 +82,126 @@
     <nav class="skyzen-public-nav">
         <div class="skyzen-nav-container">
             <div class="skyzen-brand">
-                <i class="fa-solid fa-plane"></i> SkyZen Airlines
+                <i class="fa-solid fa-plane"></i>
+                <a href="skyzenMainPage.php">SkyZen Airlines</a>
             </div>
-            <div class="skyzen-nav-links">
-                <a href="skyzenMainPage.php">Book</a>
-                <a href="skyzenManagePage.php">Manage</a>
-                <a href="skyzenInfoPage.php" class="active">Travel Info</a>
-                <a href="skyzenExplorePage.php">Explore</a>
-                <a href="skyzenFAQsPage.php">Need Help?</a>
-                <a href="skyzenLoginPage.php" class="skyzen-login-btn"><i class="fa fa-user-circle"></i> Log in</a>
+            
+            <ul class="skyzen-nav-links">
+                <li class="has-mega-menu">
+                    <a href="#">Book</a>                    
+                    <div class="mega-menu">
+                        <div class="mega-menu-top">
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-plane"></i></div>
+                                Flights
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-tag"></i></div>
+                                Seat Sale
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-handshake"></i></div>
+                                Partner Agents
+                        </div>
+                    </div>
+                </li>
+                <li class="has-mega-menu">
+                    <a href="#">Manage</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-top">
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-location-dot"></i></div>
+                                Check in
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-file-signature"></i></div>
+                                Manage Booking
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-plane-circle-check"></i></div>
+                                Flight Status
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="has-mega-menu">
+                    <a href="#">Travel Info</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-top">
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-info-circle"></i></div>
+                                Travel Guides
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-calendar-days"></i></div>
+                                Travel Tips
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-globe"></i></div>
+                                Destinations
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="has-mega-menu">
+                    <a href="#">Explore</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-top">
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-location-dot"></i></div>
+                                Philippine Destinations
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-plane"></i></div>
+                                International Destinations
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-map"></i></div>
+                                Where We Fly
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="has-mega-menu">
+                    <a href="#">Need Help?</a>
+                    <div class="mega-menu">
+                        <div class="mega-menu-top">
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-headset"></i></div>
+                                Contact Us
+                            </a>
+                            <a href="#" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-question"></i></div>
+                                FAQs
+                            </a>
+                            <a href="skyzenTermsPage.html" class="mega-icon-link">
+                                <div class="icon-circle"><i class="fa-solid fa-file-contract"></i></div>
+                                Terms & Conditions
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                </ul>
+                <div class="skyzen-nav-actions">
+                    <a href="#" class="skyzen-search-icon" style="margin-right: 15px;"><i class="fa-solid fa-magnifying-glass"></i></a>
+                    <?php if($isLoggedIn): ?>
+                        <a href="skyzenUserDash.php" class="skyzen-login-btn active" style="background: var(--theme-green); color: white !important;">
+                            <i class="fa fa-user-circle"></i> Hello, <?= $firstName ?>
+                        </a>
+                        <a href="../controllers/userController.php?logout=1" style="margin-left: 15px; color: var(--theme-red); text-decoration: none; font-weight: 700;" title="Logout">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    <?php else: ?>
+                        <a href="skyzenLoginPage.php" class="skyzen-login-btn">
+                            <i class="fa fa-user-circle"></i> Log in
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </nav>
-
-
-    <!-- FOOTER -->
+    
+        <!-- FOOTER -->
      <!-- CEBU PACIFIC INSPIRED FOOTER -->
         <footer class="skyzen-footer">
             <div class="footer-top-container">
@@ -165,9 +317,9 @@
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">
-                        <a href="#">Privacy and Cookie Policy</a>
-                        <a href="#">Website Terms of Use</a>
-                        <a href="#">Security</a>
+                        <<a href="skyzenTermsPage.html">Privacy and Cookie Policy</a>
+                        <a href="skyzenTermsPage.html">Website Terms of Use</a>
+                        <a href="skyzenTermsPage.html">Security</a>
                         <a href="#">Accessibility</a>
                         <a href="#">Site Map</a>
                     </div>

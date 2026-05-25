@@ -518,3 +518,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 6000); // Rotates the hero image every 6 seconds
     }
 });
+
+// ======================================================
+// USER DASHBOARD
+// ======================================================
+

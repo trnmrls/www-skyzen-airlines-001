@@ -1395,3 +1395,73 @@ sub {
     .footer-links-grid { grid-template-columns: repeat(3, 1fr); }
     .footer-bottom-container { flex-direction: column; gap: 15px; text-align: center; }
 }
+
+/* =======================================================
+   10. CLIENT USER DASHBOARD (My Bookings)
+======================================================= */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--theme-green) 0%, var(--nav-dark) 100%);
+    color: white;
+    padding: 40px;
+    border-radius: var(--radius-small);
+    margin-top: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.booking-card {
+    background: white;
+    border-radius: var(--radius-small);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #E2E8F0;
+    padding: 25px;
+    margin-bottom: 40px;
+}
+
+.skyzen-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px; 
+}
+
+.skyzen-table th { 
+    background: #F8FAFC; 
+    padding: 15px; 
+    text-align: left; 
+    color: #64748B; 
+    font-weight: 700; 
+    border-bottom: 2px solid #E2E8F0; 
+}
+
+.skyzen-table td { 
+    padding: 15px; 
+    border-bottom: 1px solid #E2E8F0; 
+    color: var(--text-dark); 
+    font-weight: 500; 
+    vertical-align: middle; 
+}
+
+.skyzen-table tr:hover { 
+    background: #F8FAFC; 
+}
+
+.status-badge { 
+    padding: 6px 12px; 
+    border-radius: 20px; 
+    font-size: 0.8rem; 
+    font-weight: 700; 
+}
+
+.status-confirmed { 
+    background: #DCFCE7; 
+    color: #16A34A; 
+}
+
+.status-cancelled { 
+    background: #FEE2E2; 
+    color: #DC2626; 
+}
+
+.status-pending {
+    background: #FEF3C7; 
+    color: #D97706;
+}

@@ -27,7 +27,7 @@ if (isset($_SESSION['user'])) {
     <div class="nk-auth-brand">
         <div class="brand-logo">
             <div class="brand-logo-icon"><i class="fa-solid fa-plane"></i></div>
-            SkyZen Airlines
+            <a href="skyzenMainPage.php">SkyZen Airlines</a>
         </div>
         
         <h1>Welcome to SkyZen</h1>
