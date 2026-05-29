@@ -523,3 +523,73 @@ document.addEventListener('DOMContentLoaded', function() {
 // USER DASHBOARD
 // ======================================================
 
+// Toggle between Dashboard and Profile Edit view
+function toggleProfileView(showProfile) {
+    const dashView = document.getElementById('dashboardView');
+    const profView = document.getElementById('profileView');
+    
+    if (dashView && profView) {
+        if (showProfile) {
+            dashView.style.display = 'none';
+            profView.style.display = 'block';
+        } else {
+            profView.style.display = 'none';
+            dashView.style.display = 'block';
+        }
+    }
+}
+
+// Submits the user's profile changes to the backend
+function updateMyProfileFunc() {
+// --- NEW: STRICT PASSWORD & CONFIRM PASSWORD CHECK ---
+    var newPassword = $('#upd_password').val();
+    var confPassword = $('#upd_confirm_password').val();
+
+    if (newPassword) {
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*_)[A-Za-z\d_]{8,}$/;
+        if (!passwordPattern.test(newPassword)) {
+            Swal.fire({ icon: 'warning', title: 'Weak Password', text: 'Your new password must meet all the security criteria.' });
+            return;
+        }
+        if (newPassword !== confPassword) {
+            Swal.fire({ icon: 'warning', title: 'Passwords Mismatch', text: 'Your new passwords do not match. Please re-type them carefully!' });
+            return; 
+        }
+    }
+
+    $.ajax({
+        url: '../controllers/userController.php',
+        type: 'POST',
+        data: payload,
+        success: function(response) {
+            Swal.fire({
+                title: 'Profile Updated!', 
+                text: 'Your information has been successfully saved.', 
+                icon: 'success', 
+                confirmButtonColor: '#005A9C'
+            }).then(() => { 
+                location.reload(); 
+            });
+        },
+        error: function(xhr) {
+            Swal.fire({ icon: 'error', title: 'Update Failed', text: xhr.responseText });
+        }
+    });
+}
+
+// Dynamic Password Tracker for Update Profile
+function checkUpdatePasswordReqs(val) {
+    const reqList = document.getElementById('upd-password-reqs');
+    
+    // Only show the checklist if they start typing a new password
+    if (val.length > 0) {
+        reqList.style.display = 'block';
+        toggleRequirement('upd-req-length', val.length >= 8);
+        toggleRequirement('upd-req-upper', /[A-Z]/.test(val));
+        toggleRequirement('upd-req-lower', /[a-z]/.test(val));
+        toggleRequirement('upd-req-number', /[0-9]/.test(val));
+        toggleRequirement('upd-req-special', /_/.test(val));
+    } else {
+        reqList.style.display = 'none';
+    }
+}

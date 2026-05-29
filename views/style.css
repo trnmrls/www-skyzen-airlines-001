@@ -1399,69 +1399,189 @@ sub {
 /* =======================================================
    10. CLIENT USER DASHBOARD (My Bookings)
 ======================================================= */
-.dashboard-header {
-    background: linear-gradient(135deg, var(--theme-green) 0%, var(--nav-dark) 100%);
-    color: white;
-    padding: 40px;
-    border-radius: var(--radius-small);
-    margin-top: 30px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+.sunlight-header-banner h1 {
+    color: var(--theme-green);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
 }
 
-.booking-card {
-    background: white;
-    border-radius: var(--radius-small);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #E2E8F0;
-    padding: 25px;
+.sunlight-card-row {
+    display: flex;
+    gap: 20px;
     margin-bottom: 40px;
 }
 
-.skyzen-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 20px; 
+.sunlight-profile-card, .sunlight-loyalty-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 25px;
+    flex: 1;
 }
 
-.skyzen-table th { 
-    background: #F8FAFC; 
-    padding: 15px; 
-    text-align: left; 
-    color: #64748B; 
-    font-weight: 700; 
-    border-bottom: 2px solid #E2E8F0; 
+.sunlight-profile-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.skyzen-table td { 
-    padding: 15px; 
-    border-bottom: 1px solid #E2E8F0; 
-    color: var(--text-dark); 
-    font-weight: 500; 
-    vertical-align: middle; 
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.skyzen-table tr:hover { 
-    background: #F8FAFC; 
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    background: #a5ddb5;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
 }
 
-.status-badge { 
-    padding: 6px 12px; 
-    border-radius: 20px; 
-    font-size: 0.8rem; 
-    font-weight: 700; 
+.profile-info h2 { margin: 0; font-size: 1.4rem; color: #111827; }
+
+.view-profile-link {
+    background: none;
+    border: none;
+    color: #149044;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+.view-profile-link:hover { text-decoration: underline; }
+
+.sunlight-loyalty-card {
+    position: relative;
+    padding-top: 45px;
 }
 
-.status-confirmed { 
-    background: #DCFCE7; 
-    color: #16A34A; 
+.loyalty-title {
+    position: absolute;
+    top: -30px;
+    left: 0;
+    color: #149044;
+    font-size: 1.2rem;
 }
 
-.status-cancelled { 
-    background: #FEE2E2; 
-    color: #DC2626; 
+.loyalty-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
 }
 
-.status-pending {
-    background: #FEF3C7; 
-    color: #D97706;
+.loyalty-col { display: flex; flex-direction: column; }
+.loyalty-label { font-size: 0.75rem; color: #64748B; margin-bottom: 2px; }
+
+.sunlight-section-title {
+    color: #009c3c;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.sunlight-subsection-title {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.sunlight-trips-card {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    min-height: 120px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.empty-trips {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+}
+
+.empty-trips p { font-size: 1.2rem; color: #111827; margin: 0 0 10px 0; }
+.empty-links a { color: #009c3c; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin: 0 5px; }
+.empty-links a:hover { text-decoration: underline; }
+
+.sunlight-recommendations {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 50px;
+}
+
+.rec-card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 300px;
+}
+
+.rec-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.rec-card a {
+    display: block;
+    padding: 15px 20px;
+    color: #009c3c;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+/* Update Profile Form Styles */
+.sunlight-profile-form-container {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 40px;
+    margin-bottom: 20px;
+}
+
+.form-row-custom { display: flex; gap: 20px; margin-bottom: 20px; }
+.form-group-custom { flex: 1; display: flex; flex-direction: column; margin-bottom: 20px; }
+.form-group-custom label { font-size: 0.85rem; color: #475569; margin-bottom: 8px; font-weight: 600; }
+.form-group-custom input {
+    height: 45px; padding: 0 15px; border: 1px solid #CBD5E1;
+    border-radius: 6px; font-family: inherit; font-size: 0.95rem;
+}
+.form-group-custom input:focus { border-color: #009c3c; outline: none; }
+
+.btn-update {
+    background: #67ae7b;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-update:hover { background: #1a6e32; }
+
+.btn-back {
+    background: white;
+    color: #1a6e32;
+    border: 1px solid #1a6e32;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
 }
