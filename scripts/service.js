@@ -593,3 +593,24 @@ function checkUpdatePasswordReqs(val) {
         reqList.style.display = 'none';
     }
 }
+
+/* =======================================================
+   9. DESTINATION GUIDE ACCORDION LOGIC
+======================================================= */
+document.addEventListener('DOMContentLoaded', function() {
+    const accordions = document.querySelectorAll('.accordion-header');
+
+    accordions.forEach(acc => {
+        acc.addEventListener('click', function() {
+            const parent = this.parentElement;
+            
+            document.querySelectorAll('.dest-accordion').forEach(otherAcc => {
+                if (otherAcc !== parent) {
+                    otherAcc.classList.remove('active');
+                }
+            });
+
+            parent.classList.toggle('active');
+        });
+    });
+});

@@ -1585,3 +1585,391 @@ sub {
     font-weight: 600;
     cursor: pointer;
 }
+
+/* =======================================================
+   12. SUPPORT PAGES (Contact Us & FAQs)
+======================================================= */
+/* Contact Us Typography */
+.support-header h1 {
+    color: #005A9C;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.support-header p {
+    color: #64748B;
+    font-size: 1.1rem;
+    margin: 0;
+}
+.support-divider {
+    height: 1px;
+    background-color: #005A9C;
+    margin: 30px 0;
+    width: 100%;
+}
+.support-intro {
+    color: #64748B;
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+/* Contact Info Box */
+.support-info-box {
+    background-color: #F4F8FB; /* Light blue accent */
+    border-radius: 8px;
+    padding: 50px;
+}
+.support-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.support-block {
+    margin-bottom: 35px;
+}
+.support-block h3 {
+    color: #111827;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+.support-block .label {
+    color: #475569;
+    font-size: 0.95rem;
+    margin: 0 0 5px 0;
+}
+.support-block a {
+    color: #005A9C;
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 5px;
+}
+.support-block a:hover {
+    text-decoration: underline;
+}
+.support-block .time {
+    color: #64748B;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* FAQ Search Banner */
+.faq-search-banner {
+    background-color: #1E293B; /* Dark slate blue */
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+    margin-top: 30px;
+}
+.faq-search-banner p {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.faq-search-box {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.faq-search-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+}
+.faq-search-box input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #475569;
+    padding: 12px 15px 12px 45px;
+    color: white;
+    font-size: 1rem;
+    border-radius: 4px;
+}
+.faq-search-box input::placeholder {
+    color: #64748B;
+}
+.faq-search-box input:focus {
+    outline: none;
+    border-color: #005A9C;
+}
+
+/* FAQ Topics Grid */
+.faq-topics-title {
+    text-align: center;
+    color: #475569;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+.faq-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+.faq-topic-link {
+    color: #005A9C;
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: color 0.2s;
+}
+.faq-topic-link:hover {
+    text-decoration: underline;
+    color: #004080;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .support-grid { grid-template-columns: 1fr; }
+    .faq-topics-grid { grid-template-columns: repeat(2, 1fr); }
+    .support-info-box { padding: 30px 20px; }
+}
+@media (max-width: 480px) {
+    .faq-topics-grid { grid-template-columns: 1fr; }
+}
+
+/* =======================================================
+   13. MANAGE FLIGHTS & OFFERS 
+======================================================= */
+
+/* --- Progress Bar (Search Flights) --- */
+.booking-progress-container {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    padding-top: 20px;
+}
+.progress-title {
+    font-size: 1.2rem; color: #111827; font-weight: 800; margin: 0 0 15px 0;
+}
+.progress-tracker {
+    display: flex; justify-content: space-between; gap: 10px;
+}
+.progress-step {
+    flex: 1; text-align: left; padding: 10px 0; font-size: 0.75rem; 
+    color: #94A3B8; font-weight: 600; border-top: 3px solid #E2E8F0;
+    text-transform: uppercase;
+}
+.progress-step span { margin-right: 5px; font-weight: 800; }
+.progress-step.active {
+    color: #111827; border-top-color: #005A9C;
+}
+
+/* --- Advanced Search Box --- */
+.ready-title { color: #005A9C; font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 40px; }
+.advanced-search-box {
+    background: #FFFFFF; border-radius: 8px; padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0;
+}
+.adv-search-row { display: flex; gap: 15px; align-items: flex-end; }
+.adv-input-group { flex: 1; display: flex; flex-direction: column; }
+.adv-input-group label { font-size: 0.8rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+.adv-input-group select, .adv-input-group input {
+    height: 45px; border: 1px solid #CBD5E1; border-radius: 6px; padding: 0 15px; font-family: inherit; font-size: 0.95rem;
+}
+.adv-swap-icon { color: #005A9C; font-size: 1.2rem; margin-bottom: 12px; }
+
+.btn-secondary-blue {
+    background: #60A5FA; color: white; border: none; padding: 10px 25px;
+    border-radius: 4px; font-weight: 700; cursor: pointer;
+}
+
+.adv-trip-types { display: flex; justify-content: center; gap: 0; margin-bottom: 30px; }
+.type-btn {
+    padding: 10px 40px; border: 1px solid #005A9C; background: white; color: #005A9C;
+    font-weight: 700; cursor: pointer; font-size: 0.9rem;
+}
+.type-btn:first-child { border-radius: 6px 0 0 6px; }
+.type-btn:last-child { border-radius: 0 6px 6px 0; }
+.type-btn.active { background: #60A5FA; color: white; border-color: #60A5FA; }
+
+.adv-label { font-size: 0.8rem; font-weight: 700; color: #111827; margin-bottom: 10px; }
+.adv-pax-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+.pax-counter { border: 1px solid #CBD5E1; border-radius: 6px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+.pax-counter strong { font-size: 0.9rem; color: #111827; }
+.pax-counter small { color: #94A3B8; font-size: 0.75rem; }
+.counter-controls { display: flex; align-items: center; background: #F8FAFC; border-radius: 20px; padding: 2px; }
+.counter-controls button { background: none; border: none; width: 30px; height: 30px; cursor: pointer; color: #64748B; }
+.counter-controls input { width: 30px; text-align: center; border: none; background: transparent; font-weight: 700; pointer-events: none; }
+.adv-extras-row { display: flex; gap: 20px; }
+
+/* --- Flight Tools Grid --- */
+.flight-tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.tool-card { border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden; background: white; text-align: left; }
+.tool-img { width: 100%; height: 160px; background: #005A9C; display: flex; justify-content: center; align-items: center; }
+.tool-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; mix-blend-mode: multiply; }
+.tool-card a { display: block; padding: 15px; color: #005A9C; text-decoration: none; font-weight: 700; font-size: 1rem; }
+.tool-card a i { float: right; margin-top: 3px; }
+
+/* --- Flight Offers Hero & Promos --- */
+.offers-hero { background: #005A9C; color: white; padding: 60px 20px; text-align: left; }
+.offers-hero h1 { font-size: 2.5rem; font-weight: 800; margin: 0 0 10px 0; }
+.offers-hero p { font-size: 1.1rem; margin: 0; opacity: 0.9; }
+
+.promos-section-title { text-align: center; color: #005A9C; font-size: 1.8rem; margin-bottom: 40px; }
+.offers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+.offers-grid.past-grid { grid-template-columns: repeat(3, 1fr); }
+
+.offer-card { background: white; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.offer-card img { width: 100%; height: 250px; object-fit: cover; }
+.offer-card-body { padding: 30px; flex: 1; display: flex; flex-direction: column; }
+.offer-card-body h3 { color: #005A9C; font-size: 1.2rem; margin: 0 0 15px 0; }
+.offer-card-body p { color: #64748B; font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; flex: 1; }
+.btn-learn-more { background: #005A9C; color: white; text-align: center; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-weight: 700; display: inline-block; width: max-content; }
+
+.past-promo-img { height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
+.past-promo-img h2 { font-size: 2rem; margin: 0 0 10px 0; font-weight: 800; line-height: 1.1; }
+.past-promo-img h3 { font-size: 1.5rem; margin: 0; color: #FBBF24; font-weight: 800; }
+
+@media (max-width: 992px) {
+    .flight-tools-grid { grid-template-columns: repeat(2, 1fr); }
+    .offers-grid.past-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .adv-search-row { flex-direction: column; align-items: stretch; }
+    .adv-pax-grid { grid-template-columns: repeat(2, 1fr); }
+    .flight-tools-grid { grid-template-columns: 1fr; }
+    .offers-grid { grid-template-columns: 1fr !important; }
+}
+
+/* =======================================================
+   14. DESTINATION GUIDES (Explore Pages)
+======================================================= */
+.dest-hero {
+    background: #005A9C; 
+    color: white; 
+    padding: 60px 20px; 
+    text-align: left; 
+}
+.dest-hero h1 { 
+    font-size: 2.5rem; 
+    font-weight: 800; 
+    margin: 0 0 10px 0; 
+}
+.dest-hero p { 
+    font-size: 1.1rem; 
+    margin: 0; 
+    opacity: 0.9; 
+}
+
+.dest-section {
+    margin-bottom: 60px;
+}
+
+.dest-title {
+    color: #005A9C;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.dest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: flex-start;
+}
+
+.dest-info {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    overflow: hidden; /* Clearfix for float */
+}
+
+.dest-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    float: left;
+    margin: 0 20px 10px 0;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.dest-divider {
+    border: 0;
+    border-top: 1px solid #E2E8F0;
+    margin: 60px 0;
+}
+
+/* Accordion Styles */
+.dest-accordion-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.dest-accordion {
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.accordion-header {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 20px 0;
+    font-size: 1.1rem;
+    color: #111827;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: inherit;
+    transition: color 0.2s;
+}
+
+.accordion-header:hover {
+    color: #005A9C;
+}
+
+.accordion-header i {
+    color: #94A3B8;
+    transition: transform 0.3s ease;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    color: #475569;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.accordion-content p {
+    margin: 0 0 15px 0;
+}
+
+.accordion-content strong {
+    color: #111827;
+}
+
+/* Active State for Accordion */
+.dest-accordion.active .accordion-content {
+    max-height: 1000px; /* Arbitrary large number to allow content to flow */
+    padding-bottom: 20px;
+}
+
+.dest-accordion.active .accordion-header i {
+    transform: rotate(180deg);
+    color: #005A9C;
+}
+
+@media (max-width: 768px) {
+    .dest-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .dest-img {
+        width: 120px;
+        height: 120px;
+    }
+}

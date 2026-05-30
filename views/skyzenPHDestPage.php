@@ -1,62 +1,20 @@
 <?php
-    session_start();
-    require_once "../bl/userManagement.php";
-    $userManagement = new userManagement();
-    
-    $airports = [];
-    if (method_exists($userManagement, 'getAirports')) {
-        $airports = $userManagement->getAirports();
-    }
+session_start();
+require_once "../model/database_airlines.php";
 
-    $isLoggedIn = false;
-$myBookings = [];
-$firstName = '';
-
-if (isset($_SESSION['user'])) {
-    if ((int)$_SESSION['user']['rolesID'] === 1) {
-        header('Location: skyzenAdminDash.php');
-        exit;
-    }
-    $isLoggedIn = true;
-    $firstName = htmlspecialchars($_SESSION['user']['users_firstName']);
-    try {
-        $pdo    = (new Database())->connect();
-        $userID = (int)$_SESSION['user']['usersID'];
-        
-        $stmt = $pdo->prepare("
-            SELECT b.bookings_pnrCode,
-                   b.bookings_amount,
-                   b.bookings_status,
-                   b.bookings_createdAt,
-                   f.flightsNum,
-                   f.flights_originCode,
-                   f.flights_destinationCode,
-                   f.flights_departureTime,
-                   f.flights_arrivalTime
-            FROM   tbl_bookings b
-            JOIN   tbl_tickets  t ON t.tickets_bookingsID = b.bookingsID
-            JOIN   tbl_flights  f ON f.flightsID = t.tickets_flightID
-            WHERE  b.usersID = :uid
-            ORDER  BY b.bookings_createdAt DESC
-        ");
-        $stmt->execute([':uid' => $userID]);
-        $myBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    } catch (PDOException $e) {
-        die("<p style='color:red;padding:20px'>Database Error: " . htmlspecialchars($e->getMessage()) . "</p>");
-    }
-}
+$isLoggedIn = isset($_SESSION['user']);
+$firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Flights | SkyZen Airlines</title>
+    <title>Philippine Destinations | SkyZen Airlines</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body style="background-color: #FFFFFF;">
 
     <nav class="skyzen-public-nav">
         <div class="skyzen-nav-container">
@@ -180,166 +138,84 @@ if (isset($_SESSION['user'])) {
         </div>
     </nav>
 
-    <main class="skyzen-home-main">
-        <!-- HERO SECTION & SEARCH WIDGET -->
-        <div class="skyzen-hero" id="heroSlider">
-            <div class="skyzen-hero-overlay"></div>
-            
-            <div class="skyzen-search-container">
-                <h1 class="skyzen-hero-title">More flights, more adventures.</h1>
-                
-                <div class="skyzen-search-widget">
-                    <div class="skyzen-widget-tabs">
-                        <button type="button" class="skyzen-tab active" onclick="setTripType('round', this)">Round-trip</button>
-                        <button type="button" class="skyzen-tab" onclick="setTripType('one', this)">One-way</button>
-                        <button type="button" class="skyzen-tab" onclick="setTripType('multi', this)">Multi-city</button>
+    <!-- DESTINATION HERO -->
+    <div class="dest-hero">
+        <div class="skyzen-container">
+            <h1>Destination Guide</h1>
+            <p>Visit some of the Philippines' best island destinations.</p>
+        </div>
+    </div>
+
+    <!-- DESTINATIONS CONTENT -->
+    <main class="skyzen-container" style="padding: 60px 20px;">
+        
+        <!-- BORACAY -->
+        <div class="dest-section">
+            <h2 class="dest-title">BORACAY</h2>
+            <div class="dest-grid">
+                <div class="dest-info">
+                    <img src="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=400&auto=format&fit=crop" alt="Boracay" class="dest-img">
+                    <p>Boracay Island, hailed as one of the premier beaches in the Philippines and a top destination in the Visayas region, boasts an extensive stretch of powdery white sand known as White Beach. Book a flight with SkyZen Airlines to Boracay's crystalline azure waters, stunning sunsets, and iconic white sand await you!</p>
+                </div>
+                <div class="dest-accordion-container">
+                    <div class="dest-accordion">
+                        <button class="accordion-header">Where to stay? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Station 1</strong><br>Stands as the crown jewel of White Beach, Boracay. This picturesque stretch is renowned for its breathtaking beauty, highlighted by the iconic Willy's Rock.</p>
+                            <p><strong>Station 2</strong><br>Serves as the vibrant epicenter of activity in Boracay, bustling with a dynamic array of hotels, resorts, bars, and restaurants.</p>
+                        </div>
                     </div>
-
-                    <form action="skyzenSelectFlight.php" method="GET" class="skyzen-widget-form">
-                        <div class="skyzen-form-grid">
-                            <div class="skyzen-input-group">
-                                <label>Origin</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-plane-departure"></i>
-                                    <select name="origin" id="searchOrigin" required>
-                                        <option value="" disabled selected>Where from?</option>
-                                        <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button type="button" class="skyzen-swap-btn" onclick="swapAirports()"><i class="fa-solid fa-right-left"></i></button>
-
-                            <div class="skyzen-input-group">
-                                <label>Destination</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-plane-arrival"></i>
-                                    <select name="dest" id="searchDest" required>
-                                        <option value="" disabled selected>Where to?</option>
-                                        <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Dates -->
-                            <div class="skyzen-input-group">
-                                <label>Depart</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="date" name="dep_date" min="<?= date('Y-m-d') ?>" required>
-                                </div>
-                            </div>
-
-                            <div class="skyzen-input-group" id="returnDateGroup">
-                                <label>Return</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-regular fa-calendar-check"></i>
-                                    <input type="date" name="ret_date" id="returnDate" min="<?= date('Y-m-d') ?>" required>
-                                </div>
-                            </div>
-
-                            <!-- Passengers -->
-                            <div class="skyzen-input-group">
-                                <label>Passengers</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-user-group"></i>
-                                    <select name="pax" required>
-                                        <option value="1">1 Pax(s)</option>
-                                        <option value="2">2 Pax(s)</option>
-                                        <option value="3">3 Pax(s)</option>
-                                        <option value="4">4 Pax(s)</option>
-                                        <option value="5">5+ Pax(s)</option>
-                                    </select>
-                                </div>
-                            </div>
+                    <div class="dest-accordion">
+                        <button class="accordion-header">What to do? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Parasailing</strong><br>Seeking an exhilarating escapade to begin your Boracay vacation? Look no further than one of the island's top activities: parasailing!</p>
+                            <p><strong>Island Hopping</strong><br>If you're craving more adventure in Boracay, why not embark on an island-hopping tour to traverse the hidden coastal gems.</p>
                         </div>
-
-                        <div class="skyzen-widget-footer">
-                            <div class="skyzen-promo-wrapper">
-                                <i class="fa-solid fa-tag"></i>
-                                <input type="text" name="promo" placeholder="Promo Code">
-                            </div>
-                            <button type="submit" class="skyzen-submit-btn">Search flights</button>
+                    </div>
+                    <div class="dest-accordion">
+                        <button class="accordion-header">Where to go? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Puka Beach</strong><br>Puka Beach stands out as a tranquil retreat in Boracay, featuring a pristine white-sand shoreline adorned with scattered puka shells.</p>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- FEATURES SECTION (c-everyoneflies) -->
-        <section class="skyzen-features-section">
-            <div class="skyzen-container">
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-check-to-slot"></i></div>
-                        <h4>Check In</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-ticket"></i></div>
-                        <h4>Super Pass</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-plane-circle-check"></i></div>
-                        <h4>Flight Status</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-pen-to-square"></i></div>
-                        <h4>Manage Booking</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <hr class="dest-divider">
 
-        <!-- CHEAP FLIGHTS PROMO SECTION (c-cheap-flights) -->
-        <section class="skyzen-promo-section">
-            <div class="skyzen-container">
-                <h2>Book cheap flights from</h2>
-                <div class="promo-tabs">
-                    <button class="active">Manila</button>
-                    <button>Cebu</button>
-                    <button>Davao</button>
-                    <button>Clark</button>
+        <!-- CEBU -->
+        <div class="dest-section">
+            <h2 class="dest-title">CEBU</h2>
+            <div class="dest-grid">
+                <div class="dest-info">
+                    <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=400&auto=format&fit=crop" alt="Cebu" class="dest-img">
+                    <p>Cebu holds a prominent place in the country's Spanish colonial history for having served as the original capital of the Philippines until the 17th century, earning the title of "The Queen of the South." The province has six major cities - Cebu, Danao, Lapu-Lapu, Mandaue, Toledo and Talisay. Ready to explore the rich heritage of Cebu? Book your flights today!</p>
                 </div>
-                
-                <div class="promo-cards-grid">
-                    <!-- Promo Card 1 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=600&auto=format&fit=crop" alt="Cebu">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱388*</h3>
-                            <span class="promo-dest">Cebu</span>
-                            <button class="btn-book-now">Book now</button>
+                <div class="dest-accordion-container">
+                    <div class="dest-accordion">
+                        <button class="accordion-header">Where to stay? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Cebu City</strong><br>Cebu City holds the distinction of being the oldest in the Philippines. It is the bustling center of commerce, filled with historical landmarks.</p>
                         </div>
                     </div>
-                    <!-- Promo Card 2 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" alt="Boracay">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱298*</h3>
-                            <span class="promo-dest">Iloilo</span>
-                            <button class="btn-book-now">Book now</button>
+                    <div class="dest-accordion">
+                        <button class="accordion-header">What to do? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Canyoneering in Badian</strong><br>Experience the thrill of jumping off waterfalls and swimming through the stunning blue waters of Kawasan Falls.</p>
                         </div>
                     </div>
-                    <!-- Promo Card 3 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1531804055935-76f44d22d204?q=80&w=600&auto=format&fit=crop" alt="Siargao">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱799*</h3>
-                            <span class="promo-dest">Laoag</span>
-                            <button class="btn-book-now">Book now</button>
+                    <div class="dest-accordion">
+                        <button class="accordion-header">Where to go? <i class="fa-solid fa-chevron-down"></i></button>
+                        <div class="accordion-content">
+                            <p><strong>Magellan's Cross</strong><br>A historical symbol marking the arrival of the Spanish explorers and the introduction of Christianity to the Philippines.</p>
                         </div>
                     </div>
                 </div>
-                <div class="promo-disclaimer">*One-way base fares</div>
             </div>
-        </section>
+        </div>
+
+    </main>
 
         <!-- FOOTER -->
         <footer class="skyzen-footer">

@@ -1,62 +1,20 @@
 <?php
-    session_start();
-    require_once "../bl/userManagement.php";
-    $userManagement = new userManagement();
-    
-    $airports = [];
-    if (method_exists($userManagement, 'getAirports')) {
-        $airports = $userManagement->getAirports();
-    }
+session_start();
+require_once "../model/database_airlines.php";
 
-    $isLoggedIn = false;
-$myBookings = [];
-$firstName = '';
-
-if (isset($_SESSION['user'])) {
-    if ((int)$_SESSION['user']['rolesID'] === 1) {
-        header('Location: skyzenAdminDash.php');
-        exit;
-    }
-    $isLoggedIn = true;
-    $firstName = htmlspecialchars($_SESSION['user']['users_firstName']);
-    try {
-        $pdo    = (new Database())->connect();
-        $userID = (int)$_SESSION['user']['usersID'];
-        
-        $stmt = $pdo->prepare("
-            SELECT b.bookings_pnrCode,
-                   b.bookings_amount,
-                   b.bookings_status,
-                   b.bookings_createdAt,
-                   f.flightsNum,
-                   f.flights_originCode,
-                   f.flights_destinationCode,
-                   f.flights_departureTime,
-                   f.flights_arrivalTime
-            FROM   tbl_bookings b
-            JOIN   tbl_tickets  t ON t.tickets_bookingsID = b.bookingsID
-            JOIN   tbl_flights  f ON f.flightsID = t.tickets_flightID
-            WHERE  b.usersID = :uid
-            ORDER  BY b.bookings_createdAt DESC
-        ");
-        $stmt->execute([':uid' => $userID]);
-        $myBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    } catch (PDOException $e) {
-        die("<p style='color:red;padding:20px'>Database Error: " . htmlspecialchars($e->getMessage()) . "</p>");
-    }
-}
+$isLoggedIn = isset($_SESSION['user']);
+$firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Flights | SkyZen Airlines</title>
+    <title>FAQs | SkyZen Airlines</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body style="background-color: #FFFFFF;">
 
     <nav class="skyzen-public-nav">
         <div class="skyzen-nav-container">
@@ -180,166 +138,56 @@ if (isset($_SESSION['user'])) {
         </div>
     </nav>
 
-    <main class="skyzen-home-main">
-        <!-- HERO SECTION & SEARCH WIDGET -->
-        <div class="skyzen-hero" id="heroSlider">
-            <div class="skyzen-hero-overlay"></div>
-            
-            <div class="skyzen-search-container">
-                <h1 class="skyzen-hero-title">More flights, more adventures.</h1>
-                
-                <div class="skyzen-search-widget">
-                    <div class="skyzen-widget-tabs">
-                        <button type="button" class="skyzen-tab active" onclick="setTripType('round', this)">Round-trip</button>
-                        <button type="button" class="skyzen-tab" onclick="setTripType('one', this)">One-way</button>
-                        <button type="button" class="skyzen-tab" onclick="setTripType('multi', this)">Multi-city</button>
-                    </div>
+    <!-- FAQ HEADER -->
+    <main class="skyzen-container" style="padding: 60px 20px 0 20px;">
+        <div class="support-header">
+            <h1>FAQs</h1>
+            <p>Find quick answers to frequently asked questions about bookings, policies, and more.</p>
+        </div>
+    </main>
 
-                    <form action="skyzenSelectFlight.php" method="GET" class="skyzen-widget-form">
-                        <div class="skyzen-form-grid">
-                            <div class="skyzen-input-group">
-                                <label>Origin</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-plane-departure"></i>
-                                    <select name="origin" id="searchOrigin" required>
-                                        <option value="" disabled selected>Where from?</option>
-                                        <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button type="button" class="skyzen-swap-btn" onclick="swapAirports()"><i class="fa-solid fa-right-left"></i></button>
-
-                            <div class="skyzen-input-group">
-                                <label>Destination</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-plane-arrival"></i>
-                                    <select name="dest" id="searchDest" required>
-                                        <option value="" disabled selected>Where to?</option>
-                                        <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Dates -->
-                            <div class="skyzen-input-group">
-                                <label>Depart</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="date" name="dep_date" min="<?= date('Y-m-d') ?>" required>
-                                </div>
-                            </div>
-
-                            <div class="skyzen-input-group" id="returnDateGroup">
-                                <label>Return</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-regular fa-calendar-check"></i>
-                                    <input type="date" name="ret_date" id="returnDate" min="<?= date('Y-m-d') ?>" required>
-                                </div>
-                            </div>
-
-                            <!-- Passengers -->
-                            <div class="skyzen-input-group">
-                                <label>Passengers</label>
-                                <div class="skyzen-input-wrapper">
-                                    <i class="fa-solid fa-user-group"></i>
-                                    <select name="pax" required>
-                                        <option value="1">1 Pax(s)</option>
-                                        <option value="2">2 Pax(s)</option>
-                                        <option value="3">3 Pax(s)</option>
-                                        <option value="4">4 Pax(s)</option>
-                                        <option value="5">5+ Pax(s)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="skyzen-widget-footer">
-                            <div class="skyzen-promo-wrapper">
-                                <i class="fa-solid fa-tag"></i>
-                                <input type="text" name="promo" placeholder="Promo Code">
-                            </div>
-                            <button type="submit" class="skyzen-submit-btn">Search flights</button>
-                        </div>
-                    </form>
-                </div>
+    <!-- FAQ SEARCH BANNER -->
+    <div class="faq-search-banner">
+        <div class="skyzen-container">
+            <p>Simply select a topic or type in the search box below to find the answers you're looking for.</p>
+            <div class="faq-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search">
             </div>
         </div>
+    </div>
 
-        <!-- FEATURES SECTION (c-everyoneflies) -->
-        <section class="skyzen-features-section">
-            <div class="skyzen-container">
-                <div class="features-grid">
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-check-to-slot"></i></div>
-                        <h4>Check In</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-ticket"></i></div>
-                        <h4>Super Pass</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-plane-circle-check"></i></div>
-                        <h4>Flight Status</h4>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-pen-to-square"></i></div>
-                        <h4>Manage Booking</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CHEAP FLIGHTS PROMO SECTION (c-cheap-flights) -->
-        <section class="skyzen-promo-section">
-            <div class="skyzen-container">
-                <h2>Book cheap flights from</h2>
-                <div class="promo-tabs">
-                    <button class="active">Manila</button>
-                    <button>Cebu</button>
-                    <button>Davao</button>
-                    <button>Clark</button>
-                </div>
-                
-                <div class="promo-cards-grid">
-                    <!-- Promo Card 1 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=600&auto=format&fit=crop" alt="Cebu">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱388*</h3>
-                            <span class="promo-dest">Cebu</span>
-                            <button class="btn-book-now">Book now</button>
-                        </div>
-                    </div>
-                    <!-- Promo Card 2 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" alt="Boracay">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱298*</h3>
-                            <span class="promo-dest">Iloilo</span>
-                            <button class="btn-book-now">Book now</button>
-                        </div>
-                    </div>
-                    <!-- Promo Card 3 -->
-                    <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1531804055935-76f44d22d204?q=80&w=600&auto=format&fit=crop" alt="Siargao">
-                        <div class="promo-details">
-                            <span class="promo-label">For as low as</span>
-                            <h3 class="promo-price">₱799*</h3>
-                            <span class="promo-dest">Laoag</span>
-                            <button class="btn-book-now">Book now</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="promo-disclaimer">*One-way base fares</div>
-            </div>
-        </section>
+    <!-- POPULAR TOPICS GRID -->
+    <section class="skyzen-container" style="padding: 50px 20px 100px 20px;">
+        <h3 class="faq-topics-title">Popular Topics</h3>
+        
+        <div class="faq-topics-grid">
+            <a href="#" class="faq-topic-link">Connecting Flights</a>
+            <a href="#" class="faq-topic-link">Infants Fly Free Program</a>
+            <a href="#" class="faq-topic-link">Acceptance of Pets and Animals</a>
+            <a href="#" class="faq-topic-link">Firearms Handling Policy</a>
+            
+            <a href="#" class="faq-topic-link">Unaccompanied Minor</a>
+            <a href="#" class="faq-topic-link">Travel Certificate</a>
+            <a href="#" class="faq-topic-link">Lapsed Booking</a>
+            <a href="#" class="faq-topic-link">Name Change</a>
+            
+            <a href="#" class="faq-topic-link">Name Correction</a>
+            <a href="#" class="faq-topic-link">Group Booking</a>
+            <a href="#" class="faq-topic-link">Duplicate Booking</a>
+            <a href="#" class="faq-topic-link">Common Waivers</a>
+            
+            <a href="#" class="faq-topic-link">SmartPass</a>
+            <a href="#" class="faq-topic-link">Baggage Allowance</a>
+            <a href="#" class="faq-topic-link">Additional Baggage</a>
+            <a href="#" class="faq-topic-link">Ancillaries / Add-ons</a>
+            
+            <a href="#" class="faq-topic-link">Baggage Restrictions or Limitations</a>
+            <a href="#" class="faq-topic-link">Airline Policies</a>
+            <a href="#" class="faq-topic-link">Aircraft</a>
+            <a href="#" class="faq-topic-link">Reservations</a>
+        </div>
+    </section>
 
         <!-- FOOTER -->
         <footer class="skyzen-footer">
