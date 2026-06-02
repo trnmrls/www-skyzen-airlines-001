@@ -1,7 +1,27 @@
 <?php
 session_start();
+require_once "../model/database_airlines.php";
+require_once "../bl/userManagement.php";
+
 $isLoggedIn = isset($_SESSION['user']);
 $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']) : '';
+
+$userManagement = new UserManagement();
+
+// 1. Capture the search parameters from the URL (sent by skyzenMainPage.php)
+$origin = $_GET['origin'] ?? '';
+$dest = $_GET['dest'] ?? '';
+$dep_date = $_GET['dep_date'] ?? '';
+$pax = (int)($_GET['pax'] ?? 1);
+
+// 2. Fetch matching flights from the database
+$flights = [];
+if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
+    // Make sure searchAvailableFlights exists in your userManagement.php!
+    $flights = method_exists($userManagement, 'searchAvailableFlights') 
+        ? $userManagement->searchAvailableFlights($origin, $dest, $dep_date, $pax) 
+        : [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

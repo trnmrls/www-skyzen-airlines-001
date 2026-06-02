@@ -202,7 +202,6 @@ if (isset($_SESSION['user'])) {
 
     
         <!-- FOOTER -->
-     <!-- CEBU PACIFIC INSPIRED FOOTER -->
         <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">

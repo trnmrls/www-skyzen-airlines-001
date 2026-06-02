@@ -70,7 +70,7 @@ if (isset($_SESSION['user'])) {
                     <a href="#">Book</a>                    
                     <div class="mega-menu">
                         <div class="mega-menu-top">
-                            <a href="skyzenOfferPage.php" class="mega-icon-link">
+                            <a href="skyzenOffersPage.php" class="mega-icon-link">
                                 <div class="icon-circle"><i class="fa-solid fa-plane"></i></div>
                                 Flight Offers
                             </a>
@@ -195,8 +195,9 @@ if (isset($_SESSION['user'])) {
                         <button type="button" class="skyzen-tab" onclick="setTripType('multi', this)">Multi-city</button>
                     </div>
 
-                    <form action="skyzenSelectFlight.php" method="GET" class="skyzen-widget-form">
+                        <form action="skyzenOffersPage.php" method="GET" class="skyzen-widget-form" onsubmit="showLoader()">
                         <div class="skyzen-form-grid">
+                            
                             <div class="skyzen-input-group">
                                 <label>Origin</label>
                                 <div class="skyzen-input-wrapper">
@@ -204,13 +205,17 @@ if (isset($_SESSION['user'])) {
                                     <select name="origin" id="searchOrigin" required>
                                         <option value="" disabled selected>Where from?</option>
                                         <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
+                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>">
+                                                <?= htmlspecialchars($apt['airports_countryCode']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
 
-                            <button type="button" class="skyzen-swap-btn" onclick="swapAirports()"><i class="fa-solid fa-right-left"></i></button>
+                            <button type="button" class="skyzen-swap-btn" onclick="swapAirports()" title="Swap Origin and Destination">
+                                <i class="fa-solid fa-right-left"></i>
+                            </button>
 
                             <div class="skyzen-input-group">
                                 <label>Destination</label>
@@ -219,13 +224,14 @@ if (isset($_SESSION['user'])) {
                                     <select name="dest" id="searchDest" required>
                                         <option value="" disabled selected>Where to?</option>
                                         <?php foreach($airports as $apt): ?>
-                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>"><?= htmlspecialchars($apt['airportsName']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)</option>
+                                            <option value="<?= htmlspecialchars($apt['airportsCode']) ?>">
+                                                <?= htmlspecialchars($apt['airports_countryCode']) ?> (<?= htmlspecialchars($apt['airportsCode']) ?>)
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
 
-                            <!-- Dates -->
                             <div class="skyzen-input-group">
                                 <label>Depart</label>
                                 <div class="skyzen-input-wrapper">
@@ -238,21 +244,20 @@ if (isset($_SESSION['user'])) {
                                 <label>Return</label>
                                 <div class="skyzen-input-wrapper">
                                     <i class="fa-regular fa-calendar-check"></i>
-                                    <input type="date" name="ret_date" id="returnDate" min="<?= date('Y-m-d') ?>" required>
+                                    <input type="date" name="ret_date" id="returnDate" min="<?= date('Y-m-d') ?>">
                                 </div>
                             </div>
 
-                            <!-- Passengers -->
                             <div class="skyzen-input-group">
                                 <label>Passengers</label>
                                 <div class="skyzen-input-wrapper">
                                     <i class="fa-solid fa-user-group"></i>
                                     <select name="pax" required>
-                                        <option value="1">1 Pax(s)</option>
-                                        <option value="2">2 Pax(s)</option>
-                                        <option value="3">3 Pax(s)</option>
-                                        <option value="4">4 Pax(s)</option>
-                                        <option value="5">5+ Pax(s)</option>
+                                        <option value="1">1 Pax</option>
+                                        <option value="2">2 Pax</option>
+                                        <option value="3">3 Pax</option>
+                                        <option value="4">4 Pax</option>
+                                        <option value="5">5 Pax</option>
                                     </select>
                                 </div>
                             </div>
@@ -279,10 +284,6 @@ if (isset($_SESSION['user'])) {
                         <h4>Check In</h4>
                     </div>
                     <div class="feature-item">
-                        <div class="feature-icon"><i class="fa-solid fa-ticket"></i></div>
-                        <h4>Super Pass</h4>
-                    </div>
-                    <div class="feature-item">
                         <div class="feature-icon"><i class="fa-solid fa-plane-circle-check"></i></div>
                         <h4>Flight Status</h4>
                     </div>
@@ -298,17 +299,11 @@ if (isset($_SESSION['user'])) {
         <section class="skyzen-promo-section">
             <div class="skyzen-container">
                 <h2>Book cheap flights from</h2>
-                <div class="promo-tabs">
-                    <button class="active">Manila</button>
-                    <button>Cebu</button>
-                    <button>Davao</button>
-                    <button>Clark</button>
-                </div>
                 
                 <div class="promo-cards-grid">
                     <!-- Promo Card 1 -->
                     <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=600&auto=format&fit=crop" alt="Cebu">
+                        <img src="https://a.cdn-hotels.com/gdcs/production67/d203/2a7858ae-55c2-4427-817c-e655cabb81cd.jpg" alt="Cebu">
                         <div class="promo-details">
                             <span class="promo-label">For as low as</span>
                             <h3 class="promo-price">₱388*</h3>
@@ -318,7 +313,7 @@ if (isset($_SESSION['user'])) {
                     </div>
                     <!-- Promo Card 2 -->
                     <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" alt="Boracay">
+                        <img src="https://tse3.mm.bing.net/th/id/OIP.j7GObPQMeE5yOggyyGzypAHaEo?cb=thfc1falcon&rs=1&pid=ImgDetMain&o=7&rm=3" alt="IloIlo">
                         <div class="promo-details">
                             <span class="promo-label">For as low as</span>
                             <h3 class="promo-price">₱298*</h3>
@@ -328,11 +323,11 @@ if (isset($_SESSION['user'])) {
                     </div>
                     <!-- Promo Card 3 -->
                     <div class="promo-card">
-                        <img src="https://images.unsplash.com/photo-1531804055935-76f44d22d204?q=80&w=600&auto=format&fit=crop" alt="Siargao">
+                        <img src="https://3.bp.blogspot.com/-Hs4gQSLce5o/WA87njPIE8I/AAAAAAAAB64/pm0X8zjZXF89ehNAo09hV1qT-73k13DpQCEw/s1600/siargao-surfing-rock-island-XL.jpg" alt="Siargao">
                         <div class="promo-details">
                             <span class="promo-label">For as low as</span>
                             <h3 class="promo-price">₱799*</h3>
-                            <span class="promo-dest">Laoag</span>
+                            <span class="promo-dest">Siargao</span>
                             <button class="btn-book-now">Book now</button>
                         </div>
                     </div>
@@ -348,9 +343,9 @@ if (isset($_SESSION['user'])) {
                     <div class="footer-col">
                         <h4>BOOK</h4>
                         <ul>
-                            <li><a href="#">Flight Offers</a></li>
-                            <li><a href="#">Seat Sale</a></li>
-                            <li><a href="#">Partner Agents</a></li>
+                            <li><a href="skyzenOffersPage.php">Flight Offers</a></li>
+                            <li><a href="skyzenSeatSalePage.php">Seat Sale</a></li>
+                            <li><a href="skyzenPartnerAgentsPage.php">Partner Agents</a></li>
                         </ul>
                         <div class="country-selector">
                             <h4>SELECT COUNTRY</h4>

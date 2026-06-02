@@ -108,5 +108,29 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
 
     $userManagement->deleteUserFunc((int)$_POST['usersID']);
     exit;
+    } else if (isset($_POST['action']) && $_POST['action'] === 'checkout_flight') {
+    header('Content-Type: application/json');
+    
+    // Ensure user is logged in before booking
+    if (!isset($_SESSION['user'])) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Please log in to book a flight.']);
+        exit;
+    }
+    
+    $userID = $_SESSION['user']['usersID'];
+    $flightID = $_POST['flightID'];
+    $paxCount = $_POST['paxCount'];
+
+    $result = $userManagement->createBookingFunc($userID, $flightID, $paxCount);
+    
+    if ($result['success']) {
+        http_response_code(200);
+    } else {
+        http_response_code(500);
+    }
+    
+    echo json_encode($result);
+    exit;
 }
 ?>

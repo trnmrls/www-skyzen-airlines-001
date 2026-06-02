@@ -614,3 +614,103 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+/* =======================================================
+   10. AIRPORT DIRECTORY LOGIC (Where We Fly)
+======================================================= */
+function filterAirports() {
+    let filterDropdown = document.getElementById('airportFilter');
+    if (!filterDropdown) return; // Exit if we aren't on the Airports page
+
+    let filterValue = filterDropdown.value;
+    let cards = document.querySelectorAll('.airport-card');
+    
+    cards.forEach(card => {
+        if (filterValue === 'all' || card.getAttribute('data-code') === filterValue) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function processCheckout() {
+            // Trigger the awesome Earth Loader!
+            showLoader();
+
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'checkout_flight',
+                    flightID: $('#flightID').val(),
+                    paxCount: $('#paxCount').val()
+                },
+                success: function(response) {
+                    hideLoader();
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Booking Confirmed!',
+                            html: `Your PNR Code is: <strong style="color:#008C4A; font-size:24px;">${response.pnr}</strong><br><br>You can view this in your dashboard.`,
+                            icon: 'success',
+                            confirmButtonColor: '#005A9C'
+                        }).then(() => {
+                            window.location.href = 'skyzenUserDash.php'; // Send them to the dashboard to see it!
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    hideLoader();
+                    Swal.fire('Error', 'Could not process booking.', 'error');
+                }
+            });
+        }
+
+/* =======================================================
+   11. GLOBAL LOADER INJECTION
+======================================================= */
+document.addEventListener("DOMContentLoaded", function() {
+    // Inject the loader HTML into every page automatically
+    const loaderHTML = `
+    <div id="skyzen-global-loader">
+        <div class="loader">
+            <div class="wait"> L O A D I N G ... </div>
+            <div class="iata_code departure_city">SKY</div>
+            <div class="plane"><img src="https://zupimages.net/up/19/34/4820.gif" class="plane-img"></div>
+            <div class="earth-wrapper"><div class="earth"></div></div>  
+            <div class="iata_code arrival_city">ZEN</div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+
+    // Attach loader to all standard forms (excluding AJAX forms which handle themselves)
+    const forms = document.querySelectorAll('form:not([id="userUpdateForm"]):not([id="regForm"]):not([id="loginForm"])');
+    forms.forEach(form => {
+        form.addEventListener('submit', function() {
+            document.getElementById('skyzen-global-loader').style.display = 'flex';
+        });
+    });
+});
+
+function showLoader() { document.getElementById('skyzen-global-loader').style.display = 'flex'; }
+function hideLoader() { document.getElementById('skyzen-global-loader').style.display = 'none'; }
+
+/* =======================================================
+   12. MAIN PAGE: FLIGHT SEARCH LOGIC
+======================================================= */
+function swapAirports() {
+    const originSelect = document.getElementById('searchOrigin');
+    const destSelect = document.getElementById('searchDest');
+    
+    if (originSelect && destSelect) {
+        // Temporarily hold the origin value
+        let tempOrigin = originSelect.value;
+        
+        // Swap values
+        originSelect.value = destSelect.value;
+        destSelect.value = tempOrigin;
+    }
+}
