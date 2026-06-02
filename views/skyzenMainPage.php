@@ -195,9 +195,8 @@ if (isset($_SESSION['user'])) {
                         <button type="button" class="skyzen-tab" onclick="setTripType('multi', this)">Multi-city</button>
                     </div>
 
-                        <form action="skyzenOffersPage.php" method="GET" class="skyzen-widget-form" onsubmit="showLoader()">
-                        <div class="skyzen-form-grid">
-                            
+                <form action="skyzenPassengerInfoPage.php" method="GET" class="skyzen-widget-form" onsubmit="showLoader()">
+                    <div class="skyzen-form-grid">                            
                             <div class="skyzen-input-group">
                                 <label>Origin</label>
                                 <div class="skyzen-input-wrapper">
@@ -457,6 +456,7 @@ if (isset($_SESSION['user'])) {
             </div>
         </footer>
     
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../scripts/service.js"></script>
 </body>
 </html>

@@ -169,21 +169,20 @@ if ($isLoggedIn) {
                 </li>
                 </ul>
 
-<div class="skyzen-nav-actions">
-            <a href="#" class="skyzen-search-icon" style="margin-right: 15px;"><i class="fa-solid fa-magnifying-glass"></i></a>
-            
-            <?php if(isset($isLoggedIn) && $isLoggedIn): ?>
-                <a href="skyzenUserDash.php" class="skyzen-login-btn active" style="background: var(--theme-green); color: white !important;">
-                    <i class="fa fa-user-circle"></i> Hello, <?php echo htmlspecialchars($firstName ?? 'User'); ?>
-                </a>
-                <a href="../controllers/userController.php?logout=1" style="margin-left: 15px; color: var(--theme-red); text-decoration: none; font-weight: 700;" title="Logout">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </a>
-            <?php else: ?>
-                <a href="skyzenLoginPage.php" class="skyzen-login-btn">
-                    <i class="fa fa-user-circle"></i> Log in
-                </a>
-            <?php endif; ?>
+            <div class="skyzen-nav-actions">
+                    <a href="#" class="skyzen-search-icon" style="margin-right: 15px;"><i class="fa-solid fa-magnifying-glass"></i></a>
+                    <?php if($isLoggedIn): ?>
+                        <a href="skyzenUserDash.php" class="skyzen-login-btn active" style="background: var(--theme-green); color: white !important;">
+                            <i class="fa fa-user-circle"></i> Hello, <?= $firstName ?>
+                        </a>
+                        <a href="../controllers/userController.php?logout=1" style="margin-left: 15px; color: var(--theme-red); text-decoration: none; font-weight: 700;" title="Logout">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </a>
+                    <?php else: ?>
+                        <a href="skyzenLoginPage.php" class="skyzen-login-btn">
+                            <i class="fa fa-user-circle"></i> Log in
+                        </a>
+                    <?php endif; ?>
             </div>
         </div>
     </nav>

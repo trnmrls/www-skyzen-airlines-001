@@ -111,26 +111,57 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
     } else if (isset($_POST['action']) && $_POST['action'] === 'checkout_flight') {
     header('Content-Type: application/json');
     
-    // Ensure user is logged in before booking
+    // Safety check: Ensure they are actually logged in
     if (!isset($_SESSION['user'])) {
-        http_response_code(401);
         echo json_encode(['success' => false, 'message' => 'Please log in to book a flight.']);
         exit;
     }
     
-    $userID = $_SESSION['user']['usersID'];
+    // 1. THIS IS THE LINE THAT WAS MISSING!
+    $userID = $_SESSION['user']['usersID']; 
+    
     $flightID = $_POST['flightID'];
     $paxCount = $_POST['paxCount'];
-
-    $result = $userManagement->createBookingFunc($userID, $flightID, $paxCount);
+    $grandTotal = $_POST['grandTotal']; 
+    $seats = $_POST['seats']; 
+    $paxNames = $_POST['paxNames'] ?? []; 
     
-    if ($result['success']) {
-        http_response_code(200);
-    } else {
-        http_response_code(500);
-    }
+    $result = $userManagement->createBookingFunc($userID, $flightID, $paxCount, $grandTotal, $seats, $paxNames);
     
     echo json_encode($result);
+    exit;
+} else if (isset($_POST['action']) && $_POST['action'] === 'web_checkin') {
+    header('Content-Type: application/json');
+    $pnr = trim($_POST['pnr']);
+    $lastName = trim($_POST['lastName']);
+    
+    $result = $userManagement->processWebCheckIn($pnr, $lastName);
+    echo json_encode($result);
+    exit;
+} else if (isset($_POST['action']) && $_POST['action'] === 'update_passenger') {
+    header('Content-Type: application/json');
+    try {
+        $db = (new Database())->connect();
+        
+        // Find the passenger ID linked to this ticket
+        $stmt = $db->prepare("SELECT tickets_passengersID FROM tbl_tickets WHERE ticketsID = :tid");
+        $stmt->execute([':tid' => $_POST['ticketID']]);
+        $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if($ticket) {
+            // Update the passenger's name in tbl_passengers!
+            $update = $db->prepare("UPDATE tbl_passengers SET passengers_fullName = :name WHERE passengersID = :pid");
+            $update->execute([
+                ':name' => strtoupper($_POST['newName']), 
+                ':pid' => $ticket['tickets_passengersID']
+            ]);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Ticket not found.']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'DB Error.']);
+    }
     exit;
 }
 ?>

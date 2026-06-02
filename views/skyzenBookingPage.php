@@ -273,11 +273,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pnr_code']) && isset(
                         <h3>Payment Details</h3>
                         <div class="payment-row">
                             <span>Base Fare</span>
-                            <span>₱<?= number_format($primaryFlight['flights_basePrice'], 2) ?></span>
+                            <span>₱<?= number_format($primaryFlight['flights_price'], 2) ?></span>
                         </div>
                         <div class="payment-row">
                             <span>Taxes & Fees</span>
-                            <span>₱<?= number_format($totalFare - $primaryFlight['flights_basePrice'], 2) ?></span>
+                            <span>₱<?= number_format($totalFare - $primaryFlight['flights_price'], 2) ?></span>
                         </div>
                         <div class="payment-divider"></div>
                         <div class="payment-row total">
@@ -307,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pnr_code']) && isset(
             </div>
         </div>
     </footer>
-
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="../scripts/service.js"></script>
 </body>
 </html>

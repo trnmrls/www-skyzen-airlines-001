@@ -1,71 +1,7 @@
 <?php
-    session_start();
-    require_once "../bl/userManagement.php";
-    $userManagement = new UserManagement();
-    
-    // 1. Capture and sanitize the search parameters from the URL
-    $origin = isset($_GET['origin']) ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $_GET['origin'])) : '';
-    $dest = isset($_GET['dest']) ? strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $_GET['dest'])) : '';
-    if (isset($_GET['dep_date'])) {
-        $date = DateTime::createFromFormat('Y-m-d', $_GET['dep_date']);
-        $dep_date = ($date && $date->format('Y-m-d') === $_GET['dep_date']) ? $_GET['dep_date'] : '';
-    } else {
-        $dep_date = '';
-    }
-    $pax = isset($_GET['pax']) ? max(1, (int)$_GET['pax']) : 1;
-    
-    // 2. Fetch matching flights from the database
-    $flights = [];
-    if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
-        $flights = $userManagement;
-    }
-
-    $isLoggedIn = false;
-$myBookings = [];
-$firstName = '';
-
-// 2. Evaluate the user's session state safely
-if (isset($_SESSION['user'])) {
-    
-    // If an Admin accidentally navigates here, safely route them to their proper workspace
-    if ((int)$_SESSION['user']['rolesID'] === 1) {
-        header('Location: skyzenAdminDash.php');
-        exit;
-    }
-
-    // The user is a valid customer, so we update our application state
-    $isLoggedIn = true;
-    $firstName = htmlspecialchars($_SESSION['user']['users_firstName']);
-
-    // 3. Fetch the secure data ONLY because we verified the user's identity
-    try {
-        $pdo    = (new Database())->connect();
-        $userID = (int)$_SESSION['user']['usersID'];
-        
-        $stmt = $pdo->prepare("
-            SELECT b.bookings_pnrCode,
-                   b.bookings_amount,
-                   b.bookings_status,
-                   b.bookings_createdAt,
-                   f.flightsNum,
-                   f.flights_originCode,
-                   f.flights_destinationCode,
-                   f.flights_departureTime,
-                   f.flights_arrivalTime
-            FROM   tbl_bookings b
-            JOIN   tbl_tickets  t ON t.tickets_bookingsID = b.bookingsID
-            JOIN   tbl_flights  f ON f.flightsID = t.tickets_flightID
-            WHERE  b.usersID = :uid
-            ORDER  BY b.bookings_createdAt DESC
-        ");
-        $stmt->execute([':uid' => $userID]);
-        $myBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-    } catch (PDOException $e) {
-        // Graceful error handling in case the database connection fails
-        die("<p style='color:red;padding:20px'>Database Error: " . htmlspecialchars($e->getMessage()) . "</p>");
-    }
-}
+session_start();
+$isLoggedIn = isset($_SESSION['user']);
+$firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -200,7 +136,74 @@ if (isset($_SESSION['user'])) {
         </div>
     </nav>
 
-    
+    <div class="manage-booking-hero" style="padding-top: 60px;">
+        <h1 style="color: #005A9C;">Travel Information</h1>
+        <p>Everything you need to know before you fly. Prepare for a seamless journey.</p>
+    </div>
+
+    <main class="skyzen-container" style="padding: 60px 20px; max-width: 800px; min-height: 50vh;">
+        
+        <div class="dest-accordion">
+            <div class="accordion-header">
+                <h3><i class="fa-solid fa-plane-departure" style="color: #005A9C; margin-right: 10px;"></i> Airport details & Check-In</h3>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p><strong>Domestic Flights:</strong> Please arrive at the airport at least 2 hours before your scheduled departure.</p>
+                <p><strong>International Flights:</strong> Please arrive at least 3 hours before your scheduled departure to allow time for immigration and security.</p>
+                <p>Skip the lines by using our Web Check-in, available from 48 hours up to 2 hours before departure.</p>
+            </div>
+        </div>
+
+        <div class="dest-accordion">
+            <div class="accordion-header">
+                <h3><i class="fa-solid fa-passport" style="color: #005A9C; margin-right: 10px;"></i> Travel documents</h3>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Passengers must ensure they have the valid documents for their destination:</p>
+                <ul>
+                    <li>A passport valid for at least 6 months from the date of travel.</li>
+                    <li>Valid visas or transit visas as required by the destination country.</li>
+                    <li>Printed or digital copy of your E-Ticket / Boarding Pass.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="dest-accordion">
+            <div class="accordion-header">
+                <h3><i class="fa-solid fa-wheelchair" style="color: #005A9C; margin-right: 10px;"></i> Special Assistances</h3>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>We strive to make flying comfortable for everyone. We offer:</p>
+                <ul>
+                    <li>Wheelchair assistance from check-in to the boarding gate.</li>
+                    <li>Guidance for visually or hearing-impaired passengers.</li>
+                    <li>Medical clearance processing for passengers traveling with specific health conditions.</li>
+                </ul>
+                <p><em>Please request special assistance at least 48 hours before your flight via your booking dashboard.</em></p>
+            </div>
+        </div>
+
+        <div class="dest-accordion">
+            <div class="accordion-header">
+                <h3><i class="fa-solid fa-baby" style="color: #005A9C; margin-right: 10px;"></i> Infants & children</h3>
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+            <div class="accordion-content">
+                <p>Traveling with little ones is easy with SkyZen:</p>
+                <ul>
+                    <li>Infants (under 2 years) can sit on an adult's lap at a discounted fare.</li>
+                    <li>Bassinets are available on long-haul flights (must be reserved in advance).</li>
+                    <li>Fully collapsible strollers can be checked in for free at the gate.</li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+
         <!-- FOOTER -->
         <footer class="skyzen-footer">
             <div class="footer-top-container">

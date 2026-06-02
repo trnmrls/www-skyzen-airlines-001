@@ -167,8 +167,7 @@ $fleet = method_exists($userManagement, 'getFleet') ? $userManagement->getFleet(
                         <div class="fleet-details">
                             <div class="fleet-stat">
                                 <span>Capacity</span>
-                                <strong><?= htmlspecialchars($plane['aircrafts_capacity'] ?? 'TBA') ?> Seats</strong>
-                            </div>
+                                <strong><?= htmlspecialchars($plane['aircrafts_maxCap'] ?? 'TBA') ?> Seats</strong>                            </div>
                             <div class="fleet-stat">
                                 <span>Status</span>
                                 <strong style="color: var(--theme-green);"><?= htmlspecialchars($plane['aircrafts_status'] ?? 'Active') ?></strong>

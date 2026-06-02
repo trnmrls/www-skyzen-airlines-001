@@ -4,8 +4,11 @@
 ======================================================= */
 document.addEventListener('DOMContentLoaded', function() {
     setupAuthSwitcher();
-    if (typeof togglePass === 'function') {
-        togglePass();
+    const toggleBtn = document.getElementById('yourToggleButtonId'); // Update this ID to whatever you used
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            togglePass();
+        });
     }
     if (document.getElementById('tpModal')) {
         openTP();
@@ -92,19 +95,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function togglePass(inputId, iconId) {
-        var x = document.getElementById(inputId);
-        var icon = document.getElementById(iconId);
-        
-        if (x.type === "password") {
-            x.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            x.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    
+    // DEFENSIVE NULL CHECK: If they don't exist on this page, stop right here!
+    if (!input || !icon) return; 
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
     }
+}
     
 /* =======================================================
    3. DYNAMIC PASSWORD VALIDATOR (REAL-TIME)
@@ -285,11 +291,13 @@ document.addEventListener('DOMContentLoaded', function() {
 /* =======================================================
    5. ADMIN DASHBOARD CHARTS (Chart.js)
 ======================================================= */
-    $(document).ready(function() {
-        const themeGreen = '#008C4A';
-        const themeRed = '#D9232D';
-        const themeDark = '#1A3626';
-        const gray = '#E5E7EB';
+$(document).ready(function() {
+        // DEFENSIVE CHECK: Only run this if Chart.js is loaded and the canvas exists!
+        if (typeof Chart !== 'undefined' && document.getElementById('lineChart')) {
+            const themeGreen = '#008C4A';
+            const themeRed = '#D9232D';
+            const themeDark = '#1A3626';
+            const gray = '#E5E7EB';
 
         const chartOptions = { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } };
         const barOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: {display: false} }, x: {grid: {display: false}} } };
@@ -333,6 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{ data: window.pieChartData.data, backgroundColor: [themeRed, themeGreen], borderWidth: 0 }]
             }, options: chartOptions
         });
+        }
     });
 
     if (typeof $.fn.DataTable !== 'undefined' && $('#data-table-basic').length > 0) {
@@ -342,6 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
             pageLength: 10,
             responsive: true
         });
+
 
 /* =======================================================
    6. ADMIN CRUD OPERATIONS (Edit, Update, Delete)
@@ -466,59 +476,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-// =======================================================
-// 7. CLIENT BOOKING ENGINE LOGIC (Homepage Interactions)
-// =======================================================
-/* =======================================================
-   7. CLIENT BOOKING ENGINE LOGIC (Homepage)
-======================================================= */
-function setTripType(type, element) {
-    document.querySelectorAll('.skyzen-tab').forEach(tab => tab.classList.remove('active'));
-    element.classList.add('active');
-
-    const returnGroup = document.getElementById('returnDateGroup');
-    const returnInput = document.getElementById('returnDate');
-
-    if (type === 'one') {
-        returnGroup.style.display = 'none';
-        returnInput.removeAttribute('required');
-        returnInput.value = '';
-    } else {
-        returnGroup.style.display = 'block';
-        returnInput.setAttribute('required', 'true');
-    }
-}
-
-function swapAirports() {
-    const originSelect = document.getElementById('searchOrigin');
-    const destSelect = document.getElementById('searchDest');
-    const tempOrigin = originSelect.value;
-    const tempDest = destSelect.value;
-
-    if(tempOrigin || tempDest) {
-        originSelect.value = tempDest;
-        destSelect.value = tempOrigin;
-    }
-}
-
-// Emulate the Hero Slider Array from the Reference Model
-document.addEventListener('DOMContentLoaded', function() {
-    const heroSection = document.getElementById('heroSlider');
-    if(heroSection) {
-        const images = [
-            'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop', // Default
-            'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?q=80&w=2000&auto=format&fit=crop', // Cebu
-            'https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=2070&auto=format&fit=crop'  // Iloilo
-        ];
-        let index = 0;
-        
-        setInterval(() => {
-            index = (index + 1) % images.length;
-            heroSection.style.backgroundImage = `url('${images[index]}')`;
-        }, 6000); // Rotates the hero image every 6 seconds
-    }
-});
-
 // ======================================================
 // USER DASHBOARD
 // ======================================================
@@ -615,6 +572,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+
 /* =======================================================
    10. AIRPORT DIRECTORY LOGIC (Where We Fly)
 ======================================================= */
@@ -670,33 +629,53 @@ function processCheckout() {
         }
 
 /* =======================================================
-   11. GLOBAL LOADER INJECTION
+   11. GLOBAL LOADER INJECTION (Bulletproof version)
 ======================================================= */
 document.addEventListener("DOMContentLoaded", function() {
-    // Inject the loader HTML into every page automatically
-    const loaderHTML = `
-    <div id="skyzen-global-loader">
-        <div class="loader">
-            <div class="wait"> L O A D I N G ... </div>
-            <div class="iata_code departure_city">SKY</div>
-            <div class="plane"><img src="https://zupimages.net/up/19/34/4820.gif" class="plane-img"></div>
-            <div class="earth-wrapper"><div class="earth"></div></div>  
-            <div class="iata_code arrival_city">ZEN</div>
-        </div>
-    </div>`;
-    document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+    // 1. Only inject if it doesn't already exist
+    if(!document.getElementById('skyzen-global-loader')) {
+        const loaderHTML = `
+        <div id="skyzen-global-loader">
+            <div class="loader">
+                <div class="wait"> L O A D I N G ... </div>
+                <div class="iata_code departure_city">SKY</div>
+                <div class="plane"><img src="https://zupimages.net/up/19/34/4820.gif" class="plane-img"></div>
+                <div class="earth-wrapper"><div class="earth"></div></div>  
+                <div class="iata_code arrival_city">ZEN</div>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+    }
 
-    // Attach loader to all standard forms (excluding AJAX forms which handle themselves)
-    const forms = document.querySelectorAll('form:not([id="userUpdateForm"]):not([id="regForm"]):not([id="loginForm"])');
+    // 2. Attach loader to all standard forms (excluding AJAX ones)
+    const forms = document.querySelectorAll('form:not([id="userUpdateForm"]):not([id="regForm"]):not([id="loginForm"]):not([id="checkoutForm"]):not([id="paymentForm"])');
     forms.forEach(form => {
         form.addEventListener('submit', function() {
-            document.getElementById('skyzen-global-loader').style.display = 'flex';
+            showLoader();
         });
     });
 });
 
-function showLoader() { document.getElementById('skyzen-global-loader').style.display = 'flex'; }
-function hideLoader() { document.getElementById('skyzen-global-loader').style.display = 'none'; }
+// 3. Force hide the loader as soon as the page is fully loaded
+window.addEventListener('load', function() {
+    hideLoader();
+});
+
+// 4. Force hide the loader if the user clicks the browser's "Back" button
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        hideLoader();
+    }
+});
+
+function showLoader() { 
+    const loader = document.getElementById('skyzen-global-loader');
+    if(loader) loader.style.display = 'flex'; 
+}
+function hideLoader() { 
+    const loader = document.getElementById('skyzen-global-loader');
+    if(loader) loader.style.display = 'none'; 
+}
 
 /* =======================================================
    12. MAIN PAGE: FLIGHT SEARCH LOGIC
@@ -714,3 +693,408 @@ function swapAirports() {
         destSelect.value = tempOrigin;
     }
 }
+
+
+
+/* =======================================================
+   13. TRIP TYPE TOGGLE (Main Page)
+======================================================= */
+function setTripType(type, buttonElement) {
+    // 1. Remove 'active' class from all buttons
+    const buttons = document.querySelectorAll('.skyzen-tab, .type-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // 2. Add 'active' class to the clicked button
+    if(buttonElement) {
+        buttonElement.classList.add('active');
+    }
+
+    // 3. Hide or show the Return Date field
+    const returnDateGroup = document.getElementById('returnDateGroup');
+    const returnDateInput = document.getElementById('returnDate');
+    
+    if (returnDateGroup) {
+        if (type === 'one') {
+            returnDateGroup.style.display = 'none';
+            if(returnDateInput) returnDateInput.removeAttribute('required');
+        } else {
+            returnDateGroup.style.display = 'block'; // Or 'flex' depending on your CSS
+            if(returnDateInput) returnDateInput.setAttribute('required', 'required');
+        }
+        }
+    }
+
+// =====================================================
+// 15. PASSENGER INFO FORM DISPLAY (PassInfo Page)
+// =====================================================
+function showPassengerForm(flightID, price) {
+            document.getElementById('passengerFormBox').style.display = 'block';
+            document.getElementById('selectedFlightID').value = flightID;
+            document.getElementById('selectedFlightPrice').value = price;
+            // Scroll down to the form
+            document.getElementById('passengerFormBox').scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+// =====================================================
+// 16. Review Payment (PaymentPage)
+// =====================================================
+function processFinalPayment() {
+            // Trigger Earth Loader!
+            showLoader();
+
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'checkout_flight',
+                    flightID: $('#flightID').val(),
+                    paxCount: $('#paxCount').val()
+                },
+                success: function(response) {
+                    hideLoader();
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            html: `Your flight is booked! Generating your boarding pass...`,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            // Redirect to the Boarding Pass generation page!
+                            window.location.href = 'skyzenBoardingPage.php?pnr=' + response.pnr;
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    hideLoader();
+                    Swal.fire('Error', 'Payment Gateway Failed.', 'error');
+                }
+            });
+        }
+        
+        document.getElementById('ccNum').addEventListener('input', function (e) {
+            let target = e.target;
+            // Strip all non-digits, then add a space every 4 digits
+            let val = target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+            target.value = val;
+            target.classList.remove('input-error');
+        });
+
+        // Auto-format Expiry Date with slash
+        document.getElementById('ccExpiry').addEventListener('input', function (e) {
+            let target = e.target;
+            // Strip all non-digits
+            let val = target.value.replace(/\D/g, '');
+            // Add slash after the 2nd digit
+            if (val.length > 2) {
+                val = val.substring(0, 2) + '/' + val.substring(2, 4);
+            }
+            target.value = val;
+            target.classList.remove('input-error');
+        });
+
+        // Restrict CVV to numbers only
+        document.getElementById('ccCvv').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+            e.target.classList.remove('input-error');
+        });
+
+        // Remove error styling on name input
+        document.getElementById('ccName').addEventListener('input', function (e) {
+            e.target.classList.remove('input-error');
+        });
+
+
+function switchTab(method) {
+            document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.pay-method-content').forEach(c => c.classList.remove('active'));
+            
+            document.getElementById('selectedMethod').value = method;
+            event.currentTarget.classList.add('active');
+            document.getElementById('method-' + method).classList.add('active');
+        }
+
+        const ccNum = document.getElementById('ccNum');
+        if (ccNum) {
+            ccNum.addEventListener('input', function (e) {
+                this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+                this.classList.remove('input-error');
+            });
+        }
+        const ccExpiry = document.getElementById('ccExpiry');
+        if (ccExpiry) {
+            ccExpiry.addEventListener('input', function (e) {
+                let val = this.value.replace(/\D/g, '');
+                if (val.length > 2) val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                this.value = val;
+                this.classList.remove('input-error');
+            });
+        }
+        const ccCvv = document.getElementById('ccCvv');
+        if (ccCvv) {
+            ccCvv.addEventListener('input', function (e) {
+                this.value = this.value.replace(/\D/g, '');
+                this.classList.remove('input-error');
+            });
+        }
+        
+        // GCash Formatting
+        const gcashNum = document.getElementById('gcashNum');
+        if (gcashNum) {
+            gcashNum.addEventListener('input', function (e) {
+                this.value = this.value.replace(/\D/g, '');
+                this.classList.remove('input-error');
+            });
+        }
+
+        function validateAndProcessPayment() {
+    // 1. Safely grab the payment method (Defaults to 'cc' if the element is missing)
+    let methodElement = document.getElementById('selectedMethod');
+    let method = methodElement ? methodElement.value : 'cc'; 
+    
+    let isValid = true;
+    let errorMsg = '';
+
+    if (method === 'cc') {
+        let name = document.getElementById('ccName');
+        let num = document.getElementById('ccNum');
+        let expiry = document.getElementById('ccExpiry');
+        let cvv = document.getElementById('ccCvv');
+
+        // Safely check if elements exist before reading .value
+        if (!name || name.value.trim() === '') { if(name) name.classList.add('input-error'); isValid = false; errorMsg = 'Please enter Cardholder Name.'; }
+        if (!num || num.value.replace(/\s/g, '').length !== 16) { if(num) num.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid Card Number.'; }
+        if (!expiry || !expiry.value.match(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)) { if(expiry) expiry.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid Expiry Date.'; }
+        if (!cvv || cvv.value.length < 3) { if(cvv) cvv.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid CVV.'; }
+    } else {
+        let gcashNum = document.getElementById('gcashNum');
+        if (!gcashNum || gcashNum.value.length !== 11 || !gcashNum.value.startsWith('09')) {
+            if(gcashNum) gcashNum.classList.add('input-error'); 
+            isValid = false; 
+            errorMsg = 'Enter a valid 11-digit GCash number starting with 09.';
+        }
+    }
+
+    if (!isValid) {
+        Swal.fire({ icon: 'warning', title: 'Invalid Details', text: errorMsg, confirmButtonColor: '#005A9C' });
+        return;
+    }
+
+    showLoader();
+    
+    let paxNamesArray = [];
+            document.querySelectorAll('.forward-pax-name').forEach(input => paxNamesArray.push(input.value));
+
+            showLoader();
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { 
+                    action: 'checkout_flight', 
+                    flightID: $('#flightID').val(), 
+                    paxCount: $('#paxCount').val(),
+                    grandTotal: '<?= $grandTotal ?>',
+                    seats: '<?= $seats ?>',
+                    paxNames: paxNamesArray 
+                },
+                success: function(response) {
+                    hideLoader();
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            html: `Transaction approved. Generating boarding pass...`,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = 'skyzenBoardingPage.php?pnr=' + response.pnr;
+                        });
+                    } else {
+                        // This will now successfully show the REAL backend error!
+                        Swal.fire('Transaction Failed', response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    hideLoader();
+                    console.error("AJAX Error: ", xhr.responseText);
+                    Swal.fire('Error', 'Payment Gateway timeout. Please check the console.', 'error');
+                }
+            });
+        }
+
+// =====================================================
+// seat selection logic (SeatSelect Page)
+// =====================================================
+document.addEventListener('DOMContentLoaded', function() {
+            const maxSeats = parseInt(document.getElementById('maxPax').value);
+            const checkboxes = document.querySelectorAll('.seat-checkbox');
+            const seatForm = document.getElementById('seatForm');
+
+            // 1. Enforce Maximum Seat Selection
+            checkboxes.forEach(box => {
+                box.addEventListener('change', function() {
+                    const checkedCount = document.querySelectorAll('.seat-checkbox:checked').length;
+                    
+                    if (this.checked && checkedCount > maxSeats) {
+                        this.checked = false; // Immediately uncheck the extra seat
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Seat Limit Reached',
+                            text: `You have only booked for ${maxSeats} passenger(s).`,
+                            confirmButtonColor: '#005A9C'
+                        });
+                    }
+                });
+            });
+
+            // 2. Enforce EXACT Seat Selection Before Submitting
+            seatForm.addEventListener('submit', function(event) {
+                const checkedCount = document.querySelectorAll('.seat-checkbox:checked').length;
+                
+                if (checkedCount !== maxSeats) {
+                    event.preventDefault(); // HALT the form submission
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Incomplete Selection',
+                        text: `Please select exactly ${maxSeats} seat(s) before continuing.`,
+                        confirmButtonColor: '#005A9C'
+                    });
+                } else {
+                    showLoader(); // Fire the global loader if everything is perfect
+                }
+            });
+        });
+
+        
+        function processCheckIn() {
+            let pnr = document.getElementById('ci_pnr').value.toUpperCase();
+            let lastName = document.getElementById('ci_lastName').value;
+
+            showLoader();
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { action: 'web_checkin', pnr: pnr, lastName: lastName },
+                success: function(response) {
+                    hideLoader();
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Checked In!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonColor: '#005A9C'
+                        }).then(() => {
+                            window.location.href = 'skyzenBoardingPage.php?pnr=' + pnr;
+                        });
+                    } else {
+                        Swal.fire('Check-In Failed', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    hideLoader();
+                    Swal.fire('Error', 'Could not connect to server.', 'error');
+                }
+            });
+        }
+
+/* =======================================================
+   13. BOOKING CHECKOUT LOGIC
+======================================================= */
+function processCheckout() {
+    // 1. Grab the hidden data from the form
+    let flightID = document.getElementById('flightID').value;
+    let paxCount = document.getElementById('paxCount').value;
+
+    // 2. Show your awesome Earth Loader!
+    showLoader();
+
+    // 3. Send the data to the controller via AJAX
+    $.ajax({
+        url: '../controllers/userController.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'checkout_flight',
+            flightID: flightID,
+            paxCount: paxCount
+        },
+        success: function(response) {
+            hideLoader();
+            if (response.success) {
+                Swal.fire({
+                    title: 'Booking Confirmed!',
+                    html: `Your PNR Code is: <strong style="color:#005A9C; font-size:24px;">${response.pnr}</strong><br><br>You can view this in your dashboard.`,
+                    icon: 'success',
+                    confirmButtonColor: '#005A9C',
+                    allowOutsideClick: false // Force them to click the button
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect them to the User Dashboard so they can see their new flight!
+                        window.location.href = 'skyzenUserDash.php'; 
+                    }
+                });
+            } else {
+                Swal.fire('Checkout Failed', response.message, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            hideLoader();
+            console.error(xhr.responseText); // Good for backend debugging
+            Swal.fire('System Error', 'Could not process the booking. Check the console.', 'error');
+        }
+    });
+}
+
+/* =======================================================
+   17. MANAGE BOOKING - EDIT PASSENGER
+======================================================= */
+function editPassengerName(ticketID, currentName) {
+    Swal.fire({
+        title: 'Edit Passenger Name',
+        input: 'text',
+        inputValue: currentName,
+        showCancelButton: true,
+        confirmButtonColor: '#005A9C',
+        confirmButtonText: 'Save Changes',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to write something!'
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            showLoader();
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'update_passenger',
+                    ticketID: ticketID,
+                    newName: result.value
+                },
+                success: function(response) {
+                    hideLoader();
+                    if(response.success) {
+                        Swal.fire('Updated!', 'Passenger name has been corrected.', 'success')
+                        .then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    hideLoader();
+                    Swal.fire('Error', 'Could not update passenger.', 'error');
+                }
+            });
+        }
+    });
+}
+
+        

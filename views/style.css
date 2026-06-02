@@ -36,20 +36,37 @@ body {
     background: rgba(255, 255, 255, 0.95); z-index: 99999; 
     justify-content: center; align-items: center; backdrop-filter: blur(5px);
 }
-.loader { text-align: center; width: 100%; position: relative; overflow: hidden; max-width: 35rem; height: 30rem; margin: 0 auto; color: #013220; }
-.wait { margin: 5rem 0; color: #013220; font-size: 1.5rem; font-weight: 800; letter-spacing: 5px;}
-.iata_code { font-size: 6rem; opacity: 0.3; top: 52%; position: absolute; color: #013220; font-weight: 900;}
+.loader { 
+    text-align: center; width: 100%; position: relative; max-width: 35rem; height: 30rem; 
+    margin: 0 auto; color: #013220; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.wait { 
+    position: absolute; top: 10%; color: #013220; font-size: 1.5rem; font-weight: 800; letter-spacing: 5px; 
+}
+.iata_code { 
+    font-size: 6rem; opacity: 0.3; position: absolute; color: #013220; font-weight: 900; top: 50%; transform: translateY(-50%);
+}
 .departure_city { left: 0; }
 .arrival_city { right: 1.5rem; }
-.plane { position: absolute; margin: 0 auto; width: 100%; z-index: 2;}
-.plane-img { animation: spin 2.5s linear infinite; width: 100px;}
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.earth-wrapper { position: absolute; margin: 0 auto; width: 100%; padding-top: 2.7rem; z-index: 1;}
+
+.earth-wrapper { 
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;
+}
 .earth {
     width: 160px; height: 160px; background: url("https://zupimages.net/up/19/34/6vlb.gif");
     border-radius: 100%; background-size: 340px; animation: earthAnim 12s infinite linear;
-    margin: 0 auto; border: 1px solid #CDD1D3; color: #013220;
+    border: 1px solid #CDD1D3;
 }
+
+.plane { 
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 100%; z-index: 2; display: flex; justify-content: center; align-items: center;
+}
+.plane-img { 
+    animation: spin 2.5s linear infinite; width: 120px; 
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
 @keyframes earthAnim { 0% {background-position-x: 0;} 100% {background-position-x: -340px;} }
 
 /* =======================================================
@@ -2225,3 +2242,36 @@ sub {
     .itin-time-col.text-right { text-align: center; }
     .itin-duration { margin: 20px 0; width: 100%; }
 }
+
+/* SEAT SELECTION */
+
+        .progress-step.clickable { cursor: pointer; transition: opacity 0.2s; }
+        .progress-step.clickable:hover { opacity: 0.7; }
+        
+        /* Available Seat Styling */
+        .seat-box {
+            padding: 15px 0; 
+            background: #E2E8F0; 
+            border-radius: 8px; 
+            font-weight: 700; 
+            color: #111827;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .seat-label { cursor: pointer; }
+        
+        /* Selected Seat Styling */
+        .seat-checkbox:checked + .seat-box {
+            background: #F59E0B !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Taken Seat Styling (Disabled) */
+        .seat-label.taken { cursor: not-allowed; }
+        .seat-taken {
+            background: #94A3B8 !important; /* Dark gray */
+            color: #E2E8F0 !important; /* Light gray text */
+            text-decoration: line-through; /* Cross it out */
+            opacity: 0.6;
+        }

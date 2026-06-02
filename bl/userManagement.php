@@ -226,49 +226,56 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
             return ['roles'=>[], 'bookings'=>[], 'revenue'=>[], 'destinations'=>[], 'paymentMethods'=>[], 'flightStatus'=>[]];
         }
     }
-}
+
 
 // MAIN PAGE - user side
-    // =======================================================
-    // MOVED THESE INSIDE THE CLASS: CLIENT ENGINE METHODS
-    // =======================================================
     function getAirports() {
         try {
             $db = (new Database())->connect();
             $stmt = $db->query("SELECT * FROM tbl_airports ORDER BY airportsName ASC");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $ex) { return []; }
+        } catch (Exception $ex) { 
+            return []; 
+        }
     }
 
     function searchAvailableFlights($origin, $dest, $date, $pax) {
         try {
             $db = (new Database())->connect();
-            $sql = "SELECT f.*, a.aircraftsModel, orig.airportsName AS originName, dest.airportsName AS destName
+            
+            $sql = "SELECT f.*, 
+                           a.aircraftsModel,
+                           orig.airportsName AS originName,
+                           dest.airportsName AS destName
                     FROM tbl_flights f
                     LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID
                     LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode
                     LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
-                    WHERE f.flights_originCode = :origin AND f.flights_destinationCode = :dest AND DATE(f.flights_departureTime) = :dep_date AND f.flights_availSeats >= :pax
+                    WHERE f.flights_originCode = :origin 
+                      AND f.flights_destinationCode = :dest 
+                      AND DATE(f.flights_departureTime) >= :dep_date
+                      AND f.flights_availSeats >= :pax
                     ORDER BY f.flights_basePrice ASC";
+            
             $stmt = $db->prepare($sql);
-            $stmt->execute([':origin' => $origin, ':dest' => $dest, ':dep_date' => $date, ':pax' => $pax]);
+            $stmt->execute([
+                ':origin' => $origin,
+                ':dest' => $dest,
+                ':dep_date' => $date,
+                ':pax' => $pax
+            ]);
+            
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $ex) { return []; }
-    }
-
-    function getFleet() {
-        try {
-            $db = (new Database())->connect();
-            $stmt = $db->query("SELECT * FROM tbl_aircrafts ORDER BY aircraftsModel ASC");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $ex) { return []; }
+        } catch (Exception $ex) {
+            return [];
+        }
     }
 
     function getBookingByPNR($pnr, $lastName) {
         try {
             $db = (new Database())->connect();
             $sql = "SELECT b.bookings_pnrCode, b.bookings_amount, b.bookings_status, b.bookings_createdAt,
-                           f.flightsNum, f.flights_originCode, f.flights_destinationCode, f.flights_departureTime, f.flights_arrivalTime, f.flights_basePrice,
+                           f.flightsNum, f.flights_originCode, f.flights_destinationCode, f.flights_departureTime, f.flights_arrivalTime, f.flights_price,
                            u.users_firstName, u.users_lastName, u.users_email, u.users_phoneNum,
                            orig.airportsName AS originName, dest.airportsName AS destName, a.aircraftsModel
                     FROM tbl_bookings b
@@ -285,35 +292,54 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
         } catch (Exception $ex) { return []; }
     }
 
-    // =======================================================
-    // ADDED THE MISSING CHECKOUT FUNCTION
-    // =======================================================
-    function createBookingFunc($userID, $flightID, $paxCount) {
+    function createBookingFunc($userID, $flightID, $paxCount, $grandTotal, $seatsString, $paxNames) {
         try {
             $db = (new Database())->connect();
-            $db->beginTransaction(); // Use transactions to ensure all queries succeed or fail together
+            $db->beginTransaction(); 
 
-            // 1. Generate PNR Code (e.g. A7X9ZQ)
+            // 1. Generate PNR Code
             $pnrCode = strtoupper(substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6));
 
-            // 2. Calculate Price
-            $stmt = $db->prepare("SELECT flights_basePrice FROM tbl_flights WHERE flightsID = :fid");
-            $stmt->execute([':fid' => $flightID]);
-            $flight = $stmt->fetch(PDO::FETCH_ASSOC);
-            $totalAmount = $flight['flights_basePrice'] * $paxCount;
-
-            // 3. Insert Booking
-            $stmtBooking = $db->prepare("INSERT INTO tbl_bookings (usersID, bookings_pnrCode, bookings_amount, bookings_status, bookings_createdAt) VALUES (:uid, :pnr, :amt, 'Confirmed', NOW())");
-            $stmtBooking->execute([':uid' => $userID, ':pnr' => $pnrCode, ':amt' => $totalAmount]);
+            // 2. Insert into tbl_bookings
+            $stmtBooking = $db->prepare("INSERT INTO tbl_bookings (usersID, bookings_amount, bookings_status, bookings_pnrCode, bookings_createdAt) VALUES (:uid, :amt, 'Confirmed', :pnr, NOW())");
+            $stmtBooking->execute([':uid' => $userID, ':amt' => $grandTotal, ':pnr' => $pnrCode]);
             $bookingID = $db->lastInsertId();
 
-            // 4. Create Tickets
-            $stmtTicket = $db->prepare("INSERT INTO tbl_tickets (tickets_flightID, tickets_bookingsID, tickets_seatNumber) VALUES (:fid, :bid, 'TBA')");
+            // 3. Fetch a default Seat Class ID for this aircraft (Required by your new tbl_tickets schema)
+            $stmtClass = $db->prepare("SELECT sc.seatClassesID FROM tbl_flights f JOIN tbl_seatClasses sc ON f.aircraftsID = sc.aircraftsID WHERE f.flightsID = :fid LIMIT 1");
+            $stmtClass->execute([':fid' => $flightID]);
+            $classRow = $stmtClass->fetch(PDO::FETCH_ASSOC);
+            $seatClassID = $classRow ? $classRow['seatClassesID'] : 1; 
+
+            $seatArray = explode(',', $seatsString);
+            
+            // PREPARE STATEMENTS
+            // Notice: Your new tbl_passengers schema requires usersID and passportID!
+            $stmtPax = $db->prepare("INSERT INTO tbl_passengers (usersID, passengers_passportID) VALUES (:uid, :passport)");
+            // Notice: Your new tbl_tickets requires tickets_seatClassesID!
+            $stmtTicket = $db->prepare("INSERT INTO tbl_tickets (tickets_passengersID, tickets_bookingsID, tickets_flightID, tickets_seatClassesID, tickets_seatNum) VALUES (:pid, :bid, :fid, :scid, :seat)");
+            
+            // 4. Loop through passengers, save them, and generate their tickets!
             for ($i = 0; $i < $paxCount; $i++) {
-                $stmtTicket->execute([':fid' => $flightID, ':bid' => $bookingID]);
+                // Save the passenger (Defaults passport to TBA until they update it later)
+                $stmtPax->execute([
+                    ':uid' => $userID,
+                    ':passport' => 'TBA' 
+                ]);
+                $paxID = $db->lastInsertId();
+
+                // Assign the seat and link all foreign keys
+                $seatAssigned = isset($seatArray[$i]) && trim($seatArray[$i]) !== '' ? trim($seatArray[$i]) : 'TBA';
+                $stmtTicket->execute([
+                    ':pid' => $paxID,
+                    ':bid' => $bookingID,
+                    ':fid' => $flightID,
+                    ':scid' => $seatClassID,
+                    ':seat' => $seatAssigned
+                ]);
             }
 
-            // 5. Update Flight Seat Capacity
+            // 5. Deduct the available seats from the flight
             $stmtUpdateSeats = $db->prepare("UPDATE tbl_flights SET flights_availSeats = flights_availSeats - :pax WHERE flightsID = :fid");
             $stmtUpdateSeats->execute([':pax' => $paxCount, ':fid' => $flightID]);
 
@@ -322,7 +348,101 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
 
         } catch (Exception $ex) {
             $db->rollBack();
-            return ['success' => false, 'message' => $ex->getMessage()];
+            return ['success' => false, 'message' => 'DB Error: ' . $ex->getMessage()];
         }
     }
+
+    // =======================================================
+    // FETCH E-TICKET DETAILS (For Boarding Pass Generation)
+    // =======================================================
+    public function getBookingDetailsForTicket($pnr, $userID) {
+        try {
+            $db = (new Database())->connect();
+            $sql = "SELECT b.bookings_pnrCode, b.bookings_amount, b.bookings_status, b.bookings_createdAt,
+                           f.flightsNum, f.flights_originCode, f.flights_destinationCode, f.flights_departureTime, f.flights_arrivalTime,
+                           u.users_firstName, u.users_lastName,
+                           orig.airportsName AS originName, dest.airportsName AS destName, a.aircraftsModel
+                    FROM tbl_bookings b
+                    JOIN tbl_users u ON b.usersID = u.usersID
+                    JOIN tbl_tickets t ON t.tickets_bookingsID = b.bookingsID
+                    JOIN tbl_flights f ON f.flightsID = t.tickets_flightID
+                    LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode
+                    LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
+                    LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID
+                    WHERE b.bookings_pnrCode = :pnr AND b.usersID = :uid
+                    LIMIT 1"; // Limit 1 just to get the main flight header for the ticket
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':pnr' => $pnr, ':uid' => $userID]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $ex) { return false; }
+    }
+
+    // =======================================================
+    // WEB CHECK-IN LOGIC
+    // =======================================================
+    function processWebCheckIn($pnr, $lastName) {
+        try {
+            $db = (new Database())->connect();
+            
+            // 1. Verify the booking exists for this last name
+            $stmt = $db->prepare("SELECT b.bookingsID FROM tbl_bookings b JOIN tbl_users u ON b.usersID = u.usersID WHERE b.bookings_pnrCode = :pnr AND u.users_lastName = :lname");
+            $stmt->execute([':pnr' => $pnr, ':lname' => $lastName]);
+            $booking = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$booking) {
+                return ['success' => false, 'message' => 'Booking not found or Last Name does not match.'];
+            }
+
+            // 2. Update the booking status (or ticket status) to Checked In
+            $stmtUpdate = $db->prepare("UPDATE tbl_bookings SET bookings_status = 'Checked In' WHERE bookingsID = :bid");
+            $stmtUpdate->execute([':bid' => $booking['bookingsID']]);
+
+            // Optional: If you have tickets_status in tbl_tickets, you can update it here too.
+            // $db->prepare("UPDATE tbl_tickets SET tickets_status = 'Checked In' WHERE tickets_bookingsID = :bid")->execute([':bid' => $booking['bookingsID']]);
+
+            return ['success' => true, 'message' => 'You are successfully checked in!'];
+        } catch (Exception $ex) {
+            return ['success' => false, 'message' => 'Check-in Error: ' . $ex->getMessage()];
+        }
+    }
+
+    // =======================================================
+    // PROMO FLIGHTS LOGIC
+    // =======================================================
+    public function getPromoFlights($maxPrice = 12500) {
+        try {
+            $db = (new Database())->connect();
+            // Fetch flights under a certain price threshold
+            $sql = "SELECT f.*, orig.airportsName AS originName, dest.airportsName AS destName
+                    FROM tbl_flights f
+                    LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode
+                    LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
+                    WHERE (f.flights_basePrice <= :maxPrice OR f.flights_basePrice IS NULL)
+                      AND DATE(f.flights_departureTime) >= CURDATE()
+                    ORDER BY f.flights_basePrice ASC LIMIT 9";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':maxPrice' => $maxPrice]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $ex) { return []; }
+    }
+
+    // =======================================================
+    // FLIGHT STATUS TRACKER LOGIC
+    // =======================================================
+    public function getFlightStatus($flightNum, $date) {
+        try {
+            $db = (new Database())->connect();
+            $sql = "SELECT f.*, orig.airportsName AS originName, dest.airportsName AS destName
+                    FROM tbl_flights f
+                    LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode
+                    LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
+                    WHERE f.flightsNum = :fnum AND DATE(f.flights_departureTime) = :fdate";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([':fnum' => $flightNum, ':fdate' => $date]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $ex) { return []; }
+    }
+
+    // INSIDE USERMAN CLASS
+}    
 ?>
