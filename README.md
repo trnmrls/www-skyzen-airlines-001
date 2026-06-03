@@ -32,11 +32,11 @@ Due to our strict **Argon2id password hashing protocol**, raw passwords cannot b
 ### 👑 Admin Account
 * **Email:** `trine@abc.com`
 * **Username:** `trnmrls`
-* **Password:** *(Use the password you originally registered this account with. If you get locked out, register a new account via the UI and manually change `rolesID = 1` in phpMyAdmin to grant Admin privileges).*
+* **Password:** *trine*
 
 ### 👤 Customer Accounts (Pre-loaded)
-* **Email:** `john.doe@email.com` | **Username:** `johndoe`
-* **Email:** `jane.smith@email.com` | **Username:** `janesmith`
+* **Email:** `kwp@abc.com` | **Username:** `kwpday6`
+* **Password:** *wonpilkim*
 * *(Note: To test the full application flow, we highly recommend using the Registration page to create a brand new customer so you can see the PHPMailer Welcome Email arrive in your real inbox!)*
 
 ---
