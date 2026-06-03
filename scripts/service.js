@@ -775,6 +775,79 @@ function processCheckIn() {
     });
 }
 
+function validateAndProcessPayment() {
+    // 1. Safely grab the payment method (Defaults to 'cc' if the element is missing)
+    let methodElement = document.getElementById('selectedMethod');
+    let method = methodElement ? methodElement.value : 'cc'; 
+    
+    let isValid = true;
+    let errorMsg = '';
+
+    if (method === 'cc') {
+        let name = document.getElementById('ccName');
+        let num = document.getElementById('ccNum');
+        let expiry = document.getElementById('ccExpiry');
+        let cvv = document.getElementById('ccCvv');
+
+        // Safely check if elements exist before reading .value
+        if (!name || name.value.trim() === '') { if(name) name.classList.add('input-error'); isValid = false; errorMsg = 'Please enter Cardholder Name.'; }
+        if (!num || num.value.replace(/\s/g, '').length !== 16) { if(num) num.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid Card Number.'; }
+        if (!expiry || !expiry.value.match(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)) { if(expiry) expiry.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid Expiry Date.'; }
+        if (!cvv || cvv.value.length < 3) { if(cvv) cvv.classList.add('input-error'); isValid = false; if(!errorMsg) errorMsg = 'Invalid CVV.'; }
+    } else {
+        let gcashNum = document.getElementById('gcashNum');
+        if (!gcashNum || gcashNum.value.length !== 11 || !gcashNum.value.startsWith('09')) {
+            if(gcashNum) gcashNum.classList.add('input-error'); 
+            isValid = false; 
+            errorMsg = 'Enter a valid 11-digit GCash number starting with 09.';
+        }
+    }
+
+    if (!isValid) {
+        Swal.fire({ icon: 'warning', title: 'Invalid Details', text: errorMsg, confirmButtonColor: '#005A9C' });
+        return;
+    }
+
+    showLoader();
+            $.ajax({
+                url: '../controllers/userController.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { 
+                    action: 'checkout_flight', 
+                    flightID: $('#flightID').val(), 
+                    paxCount: $('#paxCount').val(),
+                    // ADD THESE TWO LINES TO PASS THE MONEY AND SEATS!
+                    grandTotal: '<?= $grandTotal ?>',
+                    seats: '<?= $seats ?>'
+                },
+                success: function(response) {
+                    hideLoader();
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            html: `Transaction approved. Generating boarding pass...`,
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = 'skyzenBoardingPage.php?pnr=' + response.pnr;
+                        });
+                    } else {
+                        // This will now successfully show the REAL backend error!
+                        Swal.fire('Transaction Failed', response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    hideLoader();
+                    console.error("AJAX Error: ", xhr.responseText);
+                    Swal.fire('Error', 'Payment Gateway timeout. Please check the console.', 'error');
+                }
+            });
+    }
+
+
+
 /* =======================================================
    17. MANAGE BOOKING - EDIT PASSENGER
 ======================================================= */
@@ -946,4 +1019,54 @@ $(document).ready(function() {
             }
         });
     });
+});
+
+/* =======================================================
+   20. SEAT SELECTION STRICT LIMITER
+======================================================= */
+$(document).ready(function() {
+    // Look for the hidden input that stores the Pax Count
+    const maxPaxEl = document.getElementById('maxPax');
+    
+    if (maxPaxEl) {
+        const maxSeats = parseInt(maxPaxEl.value) || 1;
+        const checkboxes = document.querySelectorAll('.seat-checkbox');
+
+        // 1. Listen to every seat click
+        checkboxes.forEach(box => {
+            box.addEventListener('change', function() {
+                const checkedCount = document.querySelectorAll('.seat-checkbox:checked').length;
+                
+                // If they try to select more than their pax count, block it!
+                if (this.checked && checkedCount > maxSeats) {
+                    this.checked = false; // Immediately uncheck the extra seat
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Seat Limit Reached',
+                        text: `You are only booking for ${maxSeats} passenger(s).`,
+                        confirmButtonColor: '#005A9C'
+                    });
+                }
+            });
+        });
+
+        // 2. Block the Submit button if they selected too FEW seats
+        const seatForm = document.getElementById('seatForm');
+        if (seatForm) {
+            seatForm.addEventListener('submit', function(event) {
+                const checkedCount = document.querySelectorAll('.seat-checkbox:checked').length;
+                if (checkedCount !== maxSeats) {
+                    event.preventDefault(); // Stop the form from submitting
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Incomplete Selection',
+                        text: `Please select exactly ${maxSeats} seat(s) before continuing.`,
+                        confirmButtonColor: '#005A9C'
+                    });
+                } else {
+                    showLoader(); // Fire the global loader if perfect!
+                }
+            });
+        }
+    }
 });

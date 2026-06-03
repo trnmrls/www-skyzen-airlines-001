@@ -56,13 +56,19 @@ $fleet = $db->query("SELECT * FROM tbl_aircrafts ORDER BY aircraftsID DESC")->fe
                 <table id="data-table-basic" class="table table-striped">
                     <thead><tr><th>ID</th><th>Aircraft Model</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
                     <tbody>
-                        <?php foreach($fleet as $a): ?>
+                        <?php foreach($fleet as $a): 
+                            // BULLETPROOF VARIABLES (Checks all possible column names in your database)
+                            $id = $a['aircraftsID'] ?? $a['id'] ?? 'N/A';
+                            $model = $a['aircraftsModel'] ?? $a['aircraft_model'] ?? $a['model'] ?? $a['aircrafts_model'] ?? 'Unknown Model';
+                            $cap = $a['aircrafts_capacity'] ?? $a['aircraft_capacity'] ?? $a['capacity'] ?? '0';
+                            $status = $a['aircrafts_status'] ?? $a['aircraft_status'] ?? $a['status'] ?? 'Active';
+                        ?>
                             <tr>
-                                <td><?= $a['aircraftsID'] ?></td>
-                                <td><strong><?= htmlspecialchars($a['aircraftsModel']) ?></strong></td>
-                                <td><?= $a['aircrafts_maxCap'] ?> Seats</td>
-                                <td><span class="label label-success"><?= htmlspecialchars($a['aircrafts_status']) ?></span></td>
-                                <td><button class="btn btn-danger btn-sm trigger-del-fleet" data-id="<?= $a['aircraftsID'] ?>"><i class="fa-solid fa-trash"></i></button></td>
+                                <td><?= htmlspecialchars($id) ?></td>
+                                <td><strong><?= htmlspecialchars($model) ?></strong></td>
+                                <td><?= htmlspecialchars($cap) ?> Seats</td>
+                                <td><span class="label label-success"><?= htmlspecialchars($status) ?></span></td>
+                                <td><button class="btn btn-danger btn-sm trigger-del-fleet" data-id="<?= htmlspecialchars($id) ?>"><i class="fa-solid fa-trash"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

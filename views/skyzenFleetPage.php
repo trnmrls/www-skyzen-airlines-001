@@ -142,44 +142,32 @@ $fleet = method_exists($userManagement, 'getFleet') ? $userManagement->getFleet(
         </div>
     </nav>
 
-    <div class="dest-hero">
-        <div class="skyzen-container">
-            <h1>Our Fleet & Cabin</h1>
-            <p>Experience world-class comfort aboard our modern and fuel-efficient aircraft.</p>
-        </div>
+    <div class="manage-booking-hero" style="padding-top: 60px;">
+        <h1 style="color: #005A9C;">Our Fleet</h1>
+        <p>Discover the aircraft that make up the SkyZen Airlines network.</p>
     </div>
 
-    <main class="skyzen-container" style="padding: 60px 20px;">
+    <main class="skyzen-container" style="padding: 60px 20px; max-width: 1200px; min-height: 50vh;">
         <div class="fleet-grid">
-            <?php if (empty($fleet)): ?>
-                <div style="text-align: center; grid-column: 1 / -1; padding: 40px;">
-                    <h3 style="color: #64748B;">No aircraft data available. Try again later.</h3>
-                </div>
-            <?php else: ?>
-                <?php foreach($fleet as $plane): ?>
-                    <div class="fleet-card">
-                        <div class="fleet-img" style="background-image: url('https://images.unsplash.com/photo-1540339832862-4745ea9812af?q=80&w=600&auto=format&fit=crop');">
-                            <div class="fleet-overlay">
-                                <h3><?= htmlspecialchars($plane['aircraftsModel'] ?? 'SkyZen Jet') ?></h3>
-                                <p>Click to view cabin layout</p>
-                            </div>
-                        </div>
-                        <div class="fleet-details">
-                            <div class="fleet-stat">
-                                <span>Capacity</span>
-                                <strong><?= htmlspecialchars($plane['aircrafts_maxCap'] ?? 'TBA') ?> Seats</strong>                            </div>
-                            <div class="fleet-stat">
-                                <span>Status</span>
-                                <strong style="color: var(--theme-green);"><?= htmlspecialchars($plane['aircrafts_status'] ?? 'Active') ?></strong>
-                            </div>
-                            <div class="fleet-stat">
-                                <span>Wi-Fi</span>
-                                <strong>Available</strong>
-                            </div>
+            <?php foreach($fleet as $a): 
+                // Safely extract the data from your database
+                $model = $a['aircraftsModel'] ?? $a['aircraft_model'] ?? $a['model'] ?? 'SkyZen Aircraft';
+                $cap = $a['aircrafts_capacity'] ?? $a['aircraft_capacity'] ?? $a['capacity'] ?? 'TBA';
+            ?>
+                <div class="fleet-card">
+                    <div class="fleet-img">
+                        <i class="fa-solid fa-plane"></i>
+                        <img src="https://cdn.pixabay.com/photo/2016/11/18/12/36/airplane-1834241_960_720.png" alt="Plane">
+                    </div>
+                    <div class="fleet-info">
+                        <h3 class="fleet-model"><?= htmlspecialchars($model) ?></h3>
+                        <div class="fleet-specs">
+                            <div class="spec-item"><i class="fa-solid fa-users" style="color: #008C4A;"></i> <?= htmlspecialchars($cap) ?> Seats</div>
+                            <div class="spec-item"><i class="fa-solid fa-wind" style="color: #0284C7;"></i> Twin Engine</div>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
         </div>
     </main>
 

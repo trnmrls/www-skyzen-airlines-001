@@ -251,7 +251,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
         }
     } catch (Exception $e) {
         // Failsafe: Usually triggers if an admin tries to delete a plane that already has tickets booked!
-        echo json_encode(['success' => false, 'message' => 'Database Error: This record cannot be deleted because it is tied to existing bookings.']);
+        echo json_encode(['success' => false, 'message' => 'DB Error: ' . $e->getMessage()]);
     }
     exit;
 }

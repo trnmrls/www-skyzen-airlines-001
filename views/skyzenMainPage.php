@@ -74,7 +74,7 @@ if (isset($_SESSION['user'])) {
                                 <div class="icon-circle"><i class="fa-solid fa-plane"></i></div>
                                 Flight Offers
                             </a>
-                            <a href="skyzenSeatSalePage.php" class="mega-icon-link">
+                            <a href="skyzenSalePage.php" class="mega-icon-link">
                                 <div class="icon-circle"><i class="fa-solid fa-tag"></i></div>
                                 Seat Sale
                             </a>

@@ -1627,6 +1627,20 @@ sub {
     cursor: pointer;
 }
 
+.skyzen-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120px;    
+}
+
+.user-bookings-table {
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+}
+
 /* =======================================================
    12. SUPPORT PAGES (Contact Us & FAQs)
 ======================================================= */
@@ -2019,60 +2033,22 @@ sub {
    15. FLEET & AIRPORT DIRECTORY
 ======================================================= */
 
-/* --- Dynamic Fleet Cards --- */
-.fleet-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
+.fleet-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 30px; margin-top: 40px; 
 }
 
-.fleet-card {
-    background: #FFFFFF;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    border: 1px solid #E2E8F0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
+.fleet-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; transition: transform 0.3s ease; }
+.fleet-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.fleet-img { height: 220px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.fleet-img i { font-size: 6rem; color: #CBD5E1; position: absolute; }
+.fleet-img img { width: 90%; position: relative; z-index: 1; mix-blend-mode: multiply; }
+.fleet-info { padding: 25px; text-align: center; }
+.fleet-model { font-size: 1.6rem; color: #0F172A; margin: 0 0 15px 0; font-weight: 800; }
+.fleet-specs { display: flex; justify-content: center; gap: 20px; color: #64748B; font-size: 0.95rem; }
+.spec-item { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 
-.fleet-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-    border-color: #005A9C;
-}
-
-.fleet-img {
-    height: 220px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-}
-
-.fleet-overlay {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-    padding: 30px 20px 20px 20px;
-    color: white;
-}
-
-.fleet-overlay h3 { margin: 0 0 5px 0; font-size: 1.5rem; font-weight: 800; }
-.fleet-overlay p { margin: 0; font-size: 0.85rem; opacity: 0; transform: translateY(10px); transition: all 0.3s; }
-
-.fleet-card:hover .fleet-overlay p { opacity: 1; transform: translateY(0); }
-
-.fleet-details {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-    background: #F8FAFC;
-    border-top: 1px solid #E2E8F0;
-}
-
-.fleet-stat { display: flex; flex-direction: column; }
-.fleet-stat span { font-size: 0.75rem; color: #64748B; text-transform: uppercase; margin-bottom: 4px; }
-.fleet-stat strong { font-size: 0.95rem; color: #111827; }
 
 /* --- Airport Directory (Where We Fly) --- */
 .airport-hero {
@@ -2275,5 +2251,3 @@ sub {
             text-decoration: line-through; /* Cross it out */
             opacity: 0.6;
         }
-
-    

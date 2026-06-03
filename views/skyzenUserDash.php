@@ -61,9 +61,10 @@ if ($isLoggedIn) {
     <title>My Dashboard | SkyZen Airlines</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body style="background-color: var(--bg-cream);">
+<body>
 
     <nav class="skyzen-public-nav">
         <div class="skyzen-nav-container">
@@ -194,7 +195,7 @@ if ($isLoggedIn) {
             <!-- VIEW 1: THE MAIN DASHBOARD -->
             <div id="dashboardView">
                 <div class="sunlight-header-banner">
-                    <h1>Welcome back <?= htmlspecialchars($userInfo['users_firstName']) ?>!</h1>
+                    <h1>Welcome back, <?= htmlspecialchars($userInfo['users_firstName']) ?>!</h1>
                 </div>
 
                 <!-- Profile & Loyalty Cards -->
@@ -219,7 +220,7 @@ if ($isLoggedIn) {
                             <div class="loyalty-col text-center">
                                 <i class="fa-solid fa-life-ring" style="font-size: 2rem; color: #333; margin-bottom: 5px;"></i>
                                 <p style="margin:0; font-size: 0.9rem;">You have no points</p>
-                                <a href="skyzenHome.php" style="font-size: 0.85rem; color: #005A9C; text-decoration: none;">Make a new booking</a>
+                                <a href="skyzenMainPage.php" style="font-size: 0.85rem; color: #005A9C; text-decoration: none;">Make a new booking</a>
                             </div>
                         </div>
                     </div>
@@ -234,11 +235,11 @@ if ($isLoggedIn) {
                         <div class="empty-trips">
                             <p>You have no upcoming trips</p>
                             <div class="empty-links">
-                                <a href="#">Find a booking</a> | <a href="skyzenHome.php">Make a new booking</a>
+                                <a href="skyzenBookingPage.php">Find a booking</a> | <a href="skyzenBookingPage.php">Manage your booking</a>
                             </div>
                         </div>
                     <?php else: ?>
-                        <table class="skyzen-table">
+                        <table class="user-bookings-table" class="modern-table display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>PNR</th>
@@ -270,11 +271,11 @@ if ($isLoggedIn) {
                         <div class="empty-trips">
                             <p>You have no past trips</p>
                             <div class="empty-links">
-                                <a href="#">Find a booking</a> | <a href="skyzenHome.php">Make a new booking</a>
+                                <a href="skyzenMainPage.php">Find a booking</a> | <a href="skyzenBookingPage.php">Manage your booking</a>
                             </div>
                         </div>
                     <?php else: ?>
-                        <table class="skyzen-table">
+                        <table class="user-bookings-table" class="modern-table display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>PNR</th>
@@ -302,11 +303,11 @@ if ($isLoggedIn) {
                 <div class="sunlight-recommendations">
                     <div class="rec-card">
                         <img src="https://images.unsplash.com/photo-1612282130134-4b68453483df?q=80&w=400&auto=format&fit=crop" alt="Check In">
-                        <a href="#">Check-in <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="skyzenCheckInPage.php">Check-in <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                     <div class="rec-card">
                         <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=400&auto=format&fit=crop" alt="Book Flight">
-                        <a href="skyzenHome.php">Book a new flight <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="skyzenMainPage.php">Book a new flight <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -423,5 +424,19 @@ if ($isLoggedIn) {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="../scripts/service.js"></script>
+    <script>
+        // Turn the basic HTML table into a beautiful DataTable!
+        $(document).ready(function() {
+            if ($('#user-bookings-table').length > 0) {
+                $('#user-bookings-table').DataTable({
+                    responsive: true,
+                    pageLength: 5, // Show 5 bookings per page
+                    language: {
+                        search: "Search Bookings:"
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

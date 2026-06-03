@@ -172,7 +172,7 @@ $airports = method_exists($userManagement, 'getAirports') ? $userManagement->get
                     <div class="apt-code"><?= htmlspecialchars($apt['airportsCode']) ?></div>
                     <div class="apt-info">
                         <h3><?= htmlspecialchars($apt['airportsName']) ?></h3>
-                        <a href="skyzenHome.php?dest=<?= htmlspecialchars($apt['airportsCode']) ?>" class="book-flight-link">Book flights here <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="skyzenMainPage.php?dest=<?= htmlspecialchars($apt['airportsCode']) ?>" class="book-flight-link">Book flights here <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             <?php endforeach; ?>

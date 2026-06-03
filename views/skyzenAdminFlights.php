@@ -5,7 +5,7 @@ require_once "../model/database_airlines.php";
 
 $db = (new Database())->connect();
 $aircrafts = $db->query("SELECT * FROM tbl_aircrafts")->fetchAll(PDO::FETCH_ASSOC);
-$flights = $db->query("SELECT f.*, a.aircraftsModel FROM tbl_flights f LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID ORDER BY f.flights_departureTime DESC")->fetchAll(PDO::FETCH_ASSOC);
+$flights = $db->query("SELECT f.*, a.* FROM tbl_flights f LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID ORDER BY f.flights_departureTime DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +49,13 @@ $flights = $db->query("SELECT f.*, a.aircraftsModel FROM tbl_flights f LEFT JOIN
                 <div class="col-md-3 form-group">
                     <label>Aircraft</label>
                     <select id="f_aircraft" class="form-control">
-                        <?php foreach($aircrafts as $a): ?><option value="<?= $a['aircraftsID'] ?>"><?= htmlspecialchars($a['aircraftsModel']) ?></option><?php endforeach; ?>
+                        <?php foreach($aircrafts as $a): 
+                            // Safely grab the aircraft's ID and Model, regardless of DB column spelling!
+                            $id = $a['aircraftsID'] ?? $a['id'] ?? 0;
+                            $model = $a['aircraftsModel'] ?? $a['aircraft_model'] ?? $a['model'] ?? $a['aircrafts_model'] ?? 'Aircraft #'.$id;
+                        ?>
+                            <option value="<?= htmlspecialchars($id) ?>"><?= htmlspecialchars($model) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="col-md-3 form-group"><label>Origin Code (IATA)</label><input type="text" id="f_origin" class="form-control" placeholder="e.g. MNL" maxlength="3" style="text-transform:uppercase;"></div>
@@ -68,15 +74,18 @@ $flights = $db->query("SELECT f.*, a.aircraftsModel FROM tbl_flights f LEFT JOIN
                 <table id="data-table-basic" class="table table-striped">
                     <thead><tr><th>Flight</th><th>Route</th><th>Departure</th><th>Arrival</th><th>Price</th><th>Seats</th><th>Actions</th></tr></thead>
                     <tbody>
-                        <?php foreach($flights as $f): ?>
+                        <?php foreach($flights as $f): 
+                            // Safely grab the joined aircraft model name
+                            $ac_model = $f['aircraftsModel'] ?? $f['aircraft_model'] ?? $f['model'] ?? $f['aircrafts_model'] ?? 'Unknown Aircraft';
+                        ?>
                             <tr>
-                                <td><strong><?= htmlspecialchars($f['flightsNum']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($f['aircraftsModel']) ?></small></td>
+                                <td><strong><?= htmlspecialchars($f['flightsNum']) ?></strong><br><small class="text-muted"><?= htmlspecialchars($ac_model) ?></small></td>
                                 <td><?= htmlspecialchars($f['flights_originCode']) ?> <i class="fa-solid fa-arrow-right text-muted"></i> <?= htmlspecialchars($f['flights_destinationCode']) ?></td>
                                 <td><?= date('M d, Y H:i', strtotime($f['flights_departureTime'])) ?></td>
                                 <td><?= date('M d, Y H:i', strtotime($f['flights_arrivalTime'])) ?></td>
                                 <td>₱<?= number_format($f['flights_basePrice'] ?? 0, 2) ?></td>
-                                <td><?= $f['flights_availSeats'] ?></td>
-                                <td><button class="btn btn-danger btn-sm trigger-del-flight" data-id="<?= $f['flightsID'] ?>"><i class="fa-solid fa-trash"></i></button></td>
+                                <td><?= htmlspecialchars($f['flights_availSeats'] ?? 0) ?></td>
+                                <td><button class="btn btn-danger btn-sm trigger-del-flight" data-id="<?= htmlspecialchars($f['flightsID']) ?>"><i class="fa-solid fa-trash"></i></button></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
