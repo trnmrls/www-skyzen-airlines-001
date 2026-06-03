@@ -27,63 +27,47 @@
     $flightData = array_column($chartData['flightStatus'], 'total');
     
 ?>
-<!doctype html>
-<html class="no-js" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Admin Dashboard | SkyZen Airlines</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700,300" rel="stylesheet" type="text/css">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-    
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
-
 <body>
-    <div class="header-top-area">
+
+    <div class="header-top-area" style="padding: 15px 0;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="logo-area">
-                        <h2><i class="fa fa-plane"></i> SkyZen Admin</h2>
-                    </div>
-                </div>
-                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                    <div class="header-top-menu text-right" style="margin-top: 5px;">
-                        <span style="color: white; font-size: 14px; margin-right: 15px;">
-                            <i class="fa fa-user-circle"></i> Welcome, <?= htmlspecialchars($_SESSION['user']['users_firstName'] ?? 'Admin') ?>
-                        </span>
-                        <a href="../controllers/userController.php?logout=1" class="nav-link">
-                            <i class="fa fa-sign-out"></i> Logout
+                        <a href="skyzenAdminDash.php" style="font-size: 24px; font-weight: bold; text-decoration: none;">
+                            <i class="fa-solid fa-plane"></i> SKYZEN ADMIN
                         </a>
                     </div>
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 text-right">
+                    <a href="../controllers/userController.php?logout=1" class="btn btn-danger"><i class="fa-solid fa-power-off"></i> Logout</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="main-menu-area">
+    <div class="main-menu-area mg-tb-40" style="background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 40px;">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a href="#"><i class="fa fa-home"></i> Dashboard</a></li>
-                        <li><a href="skyzenAdminFlights.php"><i class="fa fa-plane"></i> Flights</a></li>
-                        <li><a href="skyzenAdminBookings.php"><i class="fa fa-ticket"></i> Bookings</a></li>
-                        <li><a href="skyzenAdminUsers.php"><i class="fa fa-users"></i> Users</a></li>
-                    </ul>
-                </div>
-            </div>
+            <ul class="nav nav-tabs notika-menu-wrap" style="border: none; padding: 15px 0;">
+                <li class="active"><a href="skyzenAdminDash.php" style="color: #008C4A; font-weight: 600; padding: 10px 20px; border-bottom: 2px solid #008C4A;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="skyzenAdminFlights.php" style="color: #333; font-weight: 600; padding: 10px 20px;"><i class="fa-solid fa-plane-departure"></i> Manage Flights</a></li>
+                <li><a href="skyzenAdminBookings.php" style="color: #333; font-weight: 600; padding: 10px 20px;"><i class="fa-solid fa-ticket"></i> Manage Bookings</a></li>
+                <li><a href="skyzenAdminFleet.php" style="color: #333; font-weight: 600; padding: 10px 20px;"><i class="fa-solid fa-jet-fighter-up"></i> Manage Fleet</a></li>
+                <li><a href="skyzenAdminUsers.php" style="color: #333; font-weight: 600; padding: 10px 20px; "><i class="fa-solid fa-users"></i> Manage Users</a></li>
+            </ul>
         </div>
     </div>
 
@@ -317,11 +301,12 @@
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../scripts/service.js"></script>
+
     <script>
     window.lineChartData = {
         labels: <?php echo json_encode($lineLabels); ?>, 
@@ -344,6 +329,5 @@
     };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../scripts/service.js"></script>
     </body>
 </html>

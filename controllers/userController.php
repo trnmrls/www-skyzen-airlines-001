@@ -163,5 +163,96 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
         echo json_encode(['success' => false, 'message' => 'DB Error.']);
     }
     exit;
+} else if (isset($_POST['action']) && in_array($_POST['action'], ['add_flight', 'delete_flight', 'update_booking_status', 'add_fleet', 'delete_fleet'])) {
+    // ADMIN ACTIONS ROUTER
+    header('Content-Type: application/json');
+    if (!isset($_SESSION['user']) || $_SESSION['user']['rolesID'] != 1) {
+        echo json_encode(['success' => false, 'message' => 'Unauthorized']); exit;
+    }
+    try {
+        $db = (new Database())->connect();
+        
+        if ($_POST['action'] === 'add_flight') {
+            $stmt = $db->prepare("INSERT INTO tbl_flights (aircraftsID, flightsNum, flights_originCode, flights_destinationCode, flights_departureTime, flights_arrivalTime, flights_basePrice, flights_availSeats, flights_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Scheduled')");
+            $stmt->execute([$_POST['aircraft'], strtoupper($_POST['num']), strtoupper($_POST['origin']), strtoupper($_POST['dest']), $_POST['dep'], $_POST['arr'], $_POST['price'], $_POST['seats']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'delete_flight') {
+            $db->prepare("DELETE FROM tbl_flights WHERE flightsID = ?")->execute([$_POST['id']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'update_booking_status') {
+            $db->prepare("UPDATE tbl_bookings SET bookings_status = ? WHERE bookingsID = ?")->execute([$_POST['status'], $_POST['id']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'add_fleet') {
+            $stmt = $db->prepare("INSERT INTO tbl_aircrafts (aircraftsModel, aircrafts_capacity, aircrafts_status) VALUES (?, ?, 'Active')");
+            $stmt->execute([$_POST['model'], $_POST['cap']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'delete_fleet') {
+            $db->prepare("DELETE FROM tbl_aircrafts WHERE aircraftsID = ?")->execute([$_POST['id']]);
+            echo json_encode(['success' => true]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Database Error: May be tied to existing records.']);
+    }
+    exit;
+} else if (isset($_POST['action']) && in_array($_POST['action'], ['add_flight', 'delete_flight', 'update_booking_status', 'add_fleet', 'delete_fleet'])) {
+    
+    // ADMIN ACTIONS ROUTER
+    header('Content-Type: application/json');
+    
+    // Security check: Make sure they are actually an Admin
+    if (!isset($_SESSION['user']) || $_SESSION['user']['rolesID'] != 1) {
+        echo json_encode(['success' => false, 'message' => 'Unauthorized Access']); 
+        exit;
+    }
+
+    try {
+        $db = (new Database())->connect();
+        
+        if ($_POST['action'] === 'add_flight') {
+            $stmt = $db->prepare("INSERT INTO tbl_flights (aircraftsID, flightsNum, flights_originCode, flights_destinationCode, flights_departureTime, flights_arrivalTime, flights_basePrice, flights_availSeats, flights_status) VALUES (:aid, :num, :orig, :dest, :dep, :arr, :price, :seats, 'Scheduled')");
+            $stmt->execute([
+                ':aid' => $_POST['aircraft'],
+                ':num' => strtoupper($_POST['num']),
+                ':orig' => strtoupper($_POST['origin']),
+                ':dest' => strtoupper($_POST['dest']),
+                ':dep' => $_POST['dep'],
+                ':arr' => $_POST['arr'],
+                ':price' => $_POST['price'],
+                ':seats' => $_POST['seats']
+            ]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'delete_flight') {
+            $stmt = $db->prepare("DELETE FROM tbl_flights WHERE flightsID = :fid");
+            $stmt->execute([':fid' => $_POST['id']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'update_booking_status') {
+            $stmt = $db->prepare("UPDATE tbl_bookings SET bookings_status = :status WHERE bookingsID = :bid");
+            $stmt->execute([':status' => $_POST['status'], ':bid' => $_POST['id']]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'add_fleet') {
+            $stmt = $db->prepare("INSERT INTO tbl_aircrafts (aircraftsModel, aircrafts_capacity, aircrafts_status) VALUES (:model, :cap, 'Active')");
+            $stmt->execute([
+                ':model' => $_POST['model'],
+                ':cap' => $_POST['cap']
+            ]);
+            echo json_encode(['success' => true]);
+            
+        } elseif ($_POST['action'] === 'delete_fleet') {
+            $stmt = $db->prepare("DELETE FROM tbl_aircrafts WHERE aircraftsID = :aid");
+            $stmt->execute([':aid' => $_POST['id']]);
+            echo json_encode(['success' => true]);
+        }
+    } catch (Exception $e) {
+        // Failsafe: Usually triggers if an admin tries to delete a plane that already has tickets booked!
+        echo json_encode(['success' => false, 'message' => 'Database Error: This record cannot be deleted because it is tied to existing bookings.']);
+    }
+    exit;
 }
 ?>
