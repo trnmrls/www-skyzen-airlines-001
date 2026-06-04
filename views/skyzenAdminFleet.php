@@ -60,7 +60,7 @@ $fleet = $db->query("SELECT * FROM tbl_aircrafts ORDER BY aircraftsID DESC")->fe
                             // BULLETPROOF VARIABLES (Checks all possible column names in your database)
                             $id = $a['aircraftsID'] ?? $a['id'] ?? 'N/A';
                             $model = $a['aircraftsModel'] ?? $a['aircraft_model'] ?? $a['model'] ?? $a['aircrafts_model'] ?? 'Unknown Model';
-                            $cap = $a['aircrafts_capacity'] ?? $a['aircraft_capacity'] ?? $a['capacity'] ?? '0';
+                            $cap = $a['aircrafts_maxCap'] ?? $a['aircraft_capacity'] ?? $a['capacity'] ?? '0';
                             $status = $a['aircrafts_status'] ?? $a['aircraft_status'] ?? $a['status'] ?? 'Active';
                         ?>
                             <tr>

@@ -846,6 +846,58 @@ function validateAndProcessPayment() {
             });
     }
 
+    /* =======================================================
+   13. BOOKING CHECKOUT LOGIC
+======================================================= */
+function processCheckout() {
+    // 1. Grab the hidden data from the form
+    let flightID = document.getElementById('flightID') ? document.getElementById('flightID').value : null;
+    let paxCount = document.getElementById('paxCount') ? document.getElementById('paxCount').value : 1;
+    
+    // THE FIX: Securely grab the Grand Total and Seats!
+    let grandTotal = document.getElementById('grandTotalValue') ? document.getElementById('grandTotalValue').value : 0;
+    let seats = document.getElementById('selectedSeatsList') ? document.getElementById('selectedSeatsList').value : 'TBA';
+
+    // 2. Show your awesome Earth Loader!
+    showLoader();
+
+    // 3. Send ALL the data to the controller via AJAX
+    $.ajax({
+        url: '../controllers/userController.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'checkout_flight',
+            flightID: flightID,
+            paxCount: paxCount,
+            grandTotal: grandTotal, // NOW SENDING THE PRICE
+            seats: seats            // NOW SENDING THE SEATS
+        },
+        success: function(response) {
+            hideLoader();
+            if (response.success) {
+                Swal.fire({
+                    title: 'Booking Confirmed!',
+                    html: `Your PNR Code is: <strong style="color:#005A9C; font-size:24px;">${response.pnr}</strong><br><br>You can view this in your dashboard.`,
+                    icon: 'success',
+                    confirmButtonColor: '#005A9C',
+                    allowOutsideClick: false 
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'skyzenUserDash.php'; 
+                    }
+                });
+            } else {
+                Swal.fire('Checkout Failed', response.message, 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            hideLoader();
+            console.error(xhr.responseText);
+            Swal.fire('System Error', 'Could not process the booking. Check the console.', 'error');
+        }
+    });
+}
 
 
 /* =======================================================
