@@ -138,7 +138,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </nav>
 
-    <!-- CONTACT US CONTENT -->
+
     <main class="skyzen-container" style="padding: 60px 20px; min-height: 60vh;">
         <div class="support-header">
             <h1>Contact Us</h1>
@@ -152,8 +152,8 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
 
             <div class="support-info-box">
                 <div class="support-grid">
-                    <!-- Column 1 -->
-                    <div class="support-col">
+
+                <div class="support-col">
                         <div class="support-block">
                             <h3>Phone Support</h3>
                             <p class="label">General Inquiries</p>
@@ -175,7 +175,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
                         </div>
                     </div>
 
-                    <!-- Column 2 -->
+
                     <div class="support-col">
                         <div class="support-block">
                             <h3>Email Support</h3>
@@ -208,7 +208,8 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </main>
 
-        <!-- FOOTER -->
+
+    
         <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
@@ -312,7 +313,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
+
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

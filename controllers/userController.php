@@ -111,13 +111,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
     } else if (isset($_POST['action']) && $_POST['action'] === 'checkout_flight') {
     header('Content-Type: application/json');
     
-    // Safety check: Ensure they are actually logged in
     if (!isset($_SESSION['user'])) {
         echo json_encode(['success' => false, 'message' => 'Please log in to book a flight.']);
         exit;
     }
     
-    // 1. THIS IS THE LINE THAT WAS MISSING!
     $userID = $_SESSION['user']['usersID']; 
     
     $flightID = $_POST['flightID'];
@@ -143,13 +141,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
     try {
         $db = (new Database())->connect();
         
-        // Find the passenger ID linked to this ticket
         $stmt = $db->prepare("SELECT tickets_passengersID FROM tbl_tickets WHERE ticketsID = :tid");
         $stmt->execute([':tid' => $_POST['ticketID']]);
         $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if($ticket) {
-            // Update the passenger's name in tbl_passengers!
             $update = $db->prepare("UPDATE tbl_passengers SET passengers_fullName = :name WHERE passengersID = :pid");
             $update->execute([
                 ':name' => strtoupper($_POST['newName']), 
@@ -164,7 +160,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
     }
     exit;
 } else if (isset($_POST['action']) && in_array($_POST['action'], ['add_flight', 'delete_flight', 'update_booking_status', 'add_fleet', 'delete_fleet'])) {
-    // ADMIN ACTIONS ROUTER
     header('Content-Type: application/json');
     if (!isset($_SESSION['user']) || $_SESSION['user']['rolesID'] != 1) {
         echo json_encode(['success' => false, 'message' => 'Unauthorized']); exit;
@@ -200,10 +195,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
     exit;
 } else if (isset($_POST['action']) && in_array($_POST['action'], ['add_flight', 'delete_flight', 'update_booking_status', 'add_fleet', 'delete_fleet'])) {
     
-    // ADMIN ACTIONS ROUTER
     header('Content-Type: application/json');
     
-    // Security check: Make sure they are actually an Admin
     if (!isset($_SESSION['user']) || $_SESSION['user']['rolesID'] != 1) {
         echo json_encode(['success' => false, 'message' => 'Unauthorized Access']); 
         exit;
@@ -250,7 +243,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') { //create regis
             echo json_encode(['success' => true]);
         }
     } catch (Exception $e) {
-        // Failsafe: Usually triggers if an admin tries to delete a plane that already has tickets booked!
         echo json_encode(['success' => false, 'message' => 'DB Error: ' . $e->getMessage()]);
     }
     exit;

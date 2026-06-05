@@ -40,7 +40,7 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
 
-    <!-- Right Login Form -->
+
     <div class="nk-auth-form-panel">
         <div class="auth-card">
             <h2>Sign In</h2>

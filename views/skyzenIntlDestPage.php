@@ -138,7 +138,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </nav>
 
-    <!-- DESTINATION HERO -->
+
     <div class="dest-hero">
         <div class="skyzen-container">
             <h1>International Destinations</h1>
@@ -146,11 +146,11 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </div>
 
-    <!-- DESTINATIONS CONTENT -->
+
     <main class="skyzen-container" style="padding: 60px 20px;">
         
-        <!-- TOKYO -->
-        <div class="dest-section">
+
+    <div class="dest-section">
             <h2 class="dest-title">TOKYO, JAPAN</h2>
             <div class="dest-grid">
                 <div class="dest-info">
@@ -177,8 +177,8 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
 
     </main>
 
-        <!-- FOOTER -->
-        <footer class="skyzen-footer">
+
+    <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
                     <div class="footer-col">
@@ -281,7 +281,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
+
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

@@ -100,7 +100,7 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
         }
     }
  
-    public function updateUserFunc($usersID, $firstName, $lastName, $phoneNum, $email, $birthday, $username, $password) { // or $firstName || $lastName || $phoneNum || $email || $birthday || $username || $password
+    public function updateUserFunc($usersID, $firstName, $lastName, $phoneNum, $email, $birthday, $username, $password) { 
         try {
             $db   = (new Database())->connect();
             
@@ -297,15 +297,12 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
             $db = (new Database())->connect();
             $db->beginTransaction(); 
 
-            // 1. Generate PNR Code
             $pnrCode = strtoupper(substr(str_shuffle("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 6));
 
-            // 2. Insert into tbl_bookings
             $stmtBooking = $db->prepare("INSERT INTO tbl_bookings (usersID, bookings_amount, bookings_status, bookings_pnrCode, bookings_createdAt) VALUES (:uid, :amt, 'Confirmed', :pnr, NOW())");
             $stmtBooking->execute([':uid' => $userID, ':amt' => $grandTotal, ':pnr' => $pnrCode]);
             $bookingID = $db->lastInsertId();
 
-            // 3. Fetch a default Seat Class ID for this aircraft (Required by your new tbl_tickets schema)
             $stmtClass = $db->prepare("SELECT sc.seatClassesID FROM tbl_flights f JOIN tbl_seatClasses sc ON f.aircraftsID = sc.aircraftsID WHERE f.flightsID = :fid LIMIT 1");
             $stmtClass->execute([':fid' => $flightID]);
             $classRow = $stmtClass->fetch(PDO::FETCH_ASSOC);
@@ -313,22 +310,16 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
 
             $seatArray = explode(',', $seatsString);
             
-            // PREPARE STATEMENTS
-            // Notice: Your new tbl_passengers schema requires usersID and passportID!
             $stmtPax = $db->prepare("INSERT INTO tbl_passengers (usersID, passengers_passportID) VALUES (:uid, :passport)");
-            // Notice: Your new tbl_tickets requires tickets_seatClassesID!
             $stmtTicket = $db->prepare("INSERT INTO tbl_tickets (tickets_passengersID, tickets_bookingsID, tickets_flightID, tickets_seatClassesID, tickets_seatNum) VALUES (:pid, :bid, :fid, :scid, :seat)");
             
-            // 4. Loop through passengers, save them, and generate their tickets!
             for ($i = 0; $i < $paxCount; $i++) {
-                // Save the passenger (Defaults passport to TBA until they update it later)
                 $stmtPax->execute([
                     ':uid' => $userID,
                     ':passport' => 'TBA' 
                 ]);
                 $paxID = $db->lastInsertId();
 
-                // Assign the seat and link all foreign keys
                 $seatAssigned = isset($seatArray[$i]) && trim($seatArray[$i]) !== '' ? trim($seatArray[$i]) : 'TBA';
                 $stmtTicket->execute([
                     ':pid' => $paxID,
@@ -339,7 +330,6 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
                 ]);
             }
 
-            // 5. Deduct the available seats from the flight
             $stmtUpdateSeats = $db->prepare("UPDATE tbl_flights SET flights_availSeats = flights_availSeats - :pax WHERE flightsID = :fid");
             $stmtUpdateSeats->execute([':pax' => $paxCount, ':fid' => $flightID]);
 
@@ -370,7 +360,7 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
                     LEFT JOIN tbl_airports dest ON f.flights_destinationCode = dest.airportsCode
                     LEFT JOIN tbl_aircrafts a ON f.aircraftsID = a.aircraftsID
                     WHERE b.bookings_pnrCode = :pnr AND b.usersID = :uid
-                    LIMIT 1"; // Limit 1 just to get the main flight header for the ticket
+                    LIMIT 1";
             $stmt = $db->prepare($sql);
             $stmt->execute([':pnr' => $pnr, ':uid' => $userID]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -384,7 +374,6 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
         try {
             $db = (new Database())->connect();
             
-            // 1. Verify the booking exists for this last name
             $stmt = $db->prepare("SELECT b.bookingsID FROM tbl_bookings b JOIN tbl_users u ON b.usersID = u.usersID WHERE b.bookings_pnrCode = :pnr AND u.users_lastName = :lname");
             $stmt->execute([':pnr' => $pnr, ':lname' => $lastName]);
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -393,13 +382,10 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
                 return ['success' => false, 'message' => 'Booking not found or Last Name does not match.'];
             }
 
-            // 2. Update the booking status (or ticket status) to Checked In
             $stmtUpdate = $db->prepare("UPDATE tbl_bookings SET bookings_status = 'Checked In' WHERE bookingsID = :bid");
             $stmtUpdate->execute([':bid' => $booking['bookingsID']]);
 
-            // Optional: If you have tickets_status in tbl_tickets, you can update it here too.
-            // $db->prepare("UPDATE tbl_tickets SET tickets_status = 'Checked In' WHERE tickets_bookingsID = :bid")->execute([':bid' => $booking['bookingsID']]);
-
+            
             return ['success' => true, 'message' => 'You are successfully checked in!'];
         } catch (Exception $ex) {
             return ['success' => false, 'message' => 'Check-in Error: ' . $ex->getMessage()];
@@ -412,7 +398,6 @@ public function addUserFunc($email, $firstName, $middleName, $lastName, $phoneNu
     public function getPromoFlights($maxPrice = 12500) {
         try {
             $db = (new Database())->connect();
-            // Fetch flights under a certain price threshold
             $sql = "SELECT f.*, orig.airportsName AS originName, dest.airportsName AS destName
                     FROM tbl_flights f
                     LEFT JOIN tbl_airports orig ON f.flights_originCode = orig.airportsCode

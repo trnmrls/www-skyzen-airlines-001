@@ -34,7 +34,6 @@
                         These legal frameworks outline your passenger rights, booking provisions, code of conduct, and privacy protection protocols when utilizing our online portal, booking engines, and onboard services. By accessing our platform, registering an account, or purchasing a ticket, you explicitly enter into a binding contractual agreement with SkyZen Airlines.
                 </p>
                 
-                <!-- separate the style -->
                 <h4 style="color: var(--theme-red); margin-top:20px;">
                     PART I: GENERAL TERMS AND CONDITIONS OF CARRIAGE
                 </h4>
@@ -89,8 +88,8 @@
                 <p>
                     Passenger safety and serenity form the foundation of our operations. SkyZen Airlines maintains an absolute zero-tolerance baseline regarding disruptive, verbal, or physical hostility toward terminal operations teams, flight attendants, or fellow passengers. The captain commands total administrative jurisdiction over the aircraft during flight operations. Any passenger displaying symptoms of chemical intoxication, aggressive behavior, or refusal to comply with cabin crew instructions will be safely contained, offloaded at the nearest waypoint, permanently banned from the SkyZen ecosystem, and handed over to international aviation enforcement authorities.</p>
                 
-                <!-- separate the style -->
-                <h4 style="color: var(--theme-green); margin-top:30px;">
+
+                    <h4 style="color: var(--theme-green); margin-top:30px;">
                     PART II: PRIVACY POLICY & USER DATA PROTECTION
                 </h4>
                 <p>
@@ -152,7 +151,6 @@
 
             </div>
 
-            <!-- separate the style -->            
         </div>
     </div>
 

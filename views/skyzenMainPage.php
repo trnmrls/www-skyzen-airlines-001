@@ -181,8 +181,8 @@ if (isset($_SESSION['user'])) {
     </nav>
 
     <main class="skyzen-home-main">
-        <!-- HERO SECTION & SEARCH WIDGET -->
-        <div class="skyzen-hero" id="heroSlider">
+
+    <div class="skyzen-hero" id="heroSlider">
             <div class="skyzen-hero-overlay"></div>
             
             <div class="skyzen-search-container">
@@ -274,7 +274,7 @@ if (isset($_SESSION['user'])) {
             </div>
         </div>
 
-        <!-- FEATURES SECTION (c-everyoneflies) -->
+
         <section class="skyzen-features-section">
             <div class="skyzen-container">
                 <div class="features-grid">
@@ -294,14 +294,14 @@ if (isset($_SESSION['user'])) {
             </div>
         </section>
 
-        <!-- CHEAP FLIGHTS PROMO SECTION (c-cheap-flights) -->
+
         <section class="skyzen-promo-section">
             <div class="skyzen-container">
                 <h2>Book cheap flights from</h2>
                 
                 <div class="promo-cards-grid">
-                    <!-- Promo Card 1 -->
-                    <div class="promo-card">
+
+                <div class="promo-card">
                         <img src="https://a.cdn-hotels.com/gdcs/production67/d203/2a7858ae-55c2-4427-817c-e655cabb81cd.jpg" alt="Cebu">
                         <div class="promo-details">
                             <span class="promo-label">For as low as</span>
@@ -310,7 +310,7 @@ if (isset($_SESSION['user'])) {
                             <button class="btn-book-now">Book now</button>
                         </div>
                     </div>
-                    <!-- Promo Card 2 -->
+
                     <div class="promo-card">
                         <img src="https://tse3.mm.bing.net/th/id/OIP.j7GObPQMeE5yOggyyGzypAHaEo?cb=thfc1falcon&rs=1&pid=ImgDetMain&o=7&rm=3" alt="IloIlo">
                         <div class="promo-details">
@@ -320,7 +320,7 @@ if (isset($_SESSION['user'])) {
                             <button class="btn-book-now">Book now</button>
                         </div>
                     </div>
-                    <!-- Promo Card 3 -->
+
                     <div class="promo-card">
                         <img src="https://3.bp.blogspot.com/-Hs4gQSLce5o/WA87njPIE8I/AAAAAAAAB64/pm0X8zjZXF89ehNAo09hV1qT-73k13DpQCEw/s1600/siargao-surfing-rock-island-XL.jpg" alt="Siargao">
                         <div class="promo-details">
@@ -335,7 +335,7 @@ if (isset($_SESSION['user'])) {
             </div>
         </section>
 
-        <!-- FOOTER -->
+
         <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
@@ -439,7 +439,7 @@ if (isset($_SESSION['user'])) {
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
+
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

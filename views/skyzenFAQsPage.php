@@ -138,7 +138,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </nav>
 
-    <!-- FAQ HEADER -->
+
     <main class="skyzen-container" style="padding: 60px 20px 0 20px;">
         <div class="support-header">
             <h1>FAQs</h1>
@@ -146,7 +146,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </main>
 
-    <!-- FAQ SEARCH BANNER -->
+
     <div class="faq-search-banner">
         <div class="skyzen-container">
             <p>Simply select a topic or type in the search box below to find the answers you're looking for.</p>
@@ -157,7 +157,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </div>
 
-    <!-- POPULAR TOPICS GRID -->
+
     <section class="skyzen-container" style="padding: 50px 20px 100px 20px;">
         <h3 class="faq-topics-title">Popular Topics</h3>
         
@@ -189,8 +189,8 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
         </div>
     </section>
 
-        <!-- FOOTER -->
-        <footer class="skyzen-footer">
+
+    <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
                     <div class="footer-col">
@@ -293,7 +293,7 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
+
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

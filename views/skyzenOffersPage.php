@@ -156,7 +156,7 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
         </div>
     </nav>
 
-    <!-- BLUE HERO SECTION -->
+
     <div class="offers-hero">
         <div class="skyzen-container">
             <h1>Flight Offers</h1>
@@ -164,13 +164,13 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
         </div>
     </div>
 
-    <!-- ONGOING PROMOTIONS -->
+
     <main class="skyzen-container" style="padding: 60px 20px;">
         <h2 class="promos-section-title">Ongoing / Upcoming Promotions</h2>
         
         <div class="offers-grid" style="margin-bottom: 80px;">
-            <!-- Promo Card 1 -->
-            <div class="offer-card">
+
+        <div class="offer-card">
                 <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop" alt="AUB Promo">
                 <div class="offer-card-body">
                     <h3>AUB Mastercard Credit Card Exclusive Offer</h3>
@@ -180,7 +180,6 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
                 </div>
             </div>
 
-            <!-- Promo Card 2 -->
             <div class="offer-card">
                 <img src="https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" alt="SkyZen Day">
                 <div class="offer-card-body">
@@ -193,7 +192,6 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
 
         <hr style="border: 0; border-top: 1px solid #E2E8F0; margin-bottom: 60px;">
 
-        <!-- PAST PROMOTIONS -->
         <h2 class="promos-section-title">Past Promotions</h2>
         
         <div class="offers-grid past-grid">
@@ -229,7 +227,6 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
         </div>
     </main>
 
-        <!-- FOOTER -->
         <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
@@ -333,7 +330,6 @@ if (!empty($origin) && !empty($dest) && !empty($dep_date)) {
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

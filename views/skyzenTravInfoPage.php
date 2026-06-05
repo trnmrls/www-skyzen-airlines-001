@@ -204,7 +204,6 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
     </main>
 
 
-        <!-- FOOTER -->
         <footer class="skyzen-footer">
             <div class="footer-top-container">
                 <div class="footer-links-grid">
@@ -308,7 +307,6 @@ $firstName = $isLoggedIn ? htmlspecialchars($_SESSION['user']['users_firstName']
                 </div>
             </div>
 
-            <!-- The vibrant bottom bar -->
             <div class="footer-bottom-bar">
                 <div class="footer-bottom-container">
                     <div class="footer-legal">

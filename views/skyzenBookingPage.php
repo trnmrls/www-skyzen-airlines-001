@@ -10,7 +10,6 @@ $bookingData = [];
 $errorMsg = '';
 $hasSearched = false;
 
-// Handle the Form Submission directly on the page
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['pnr_code']) && isset($_POST['last_name'])) {
     $pnr = strtoupper(trim($_POST['pnr_code']));
     $lname = trim($_POST['last_name']);

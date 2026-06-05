@@ -188,17 +188,14 @@ if ($isLoggedIn) {
         </div>
     </nav>
 
-    <!-- DASHBOARD CONTENT -->
     <main class="skyzen-container" style="min-height: 60vh; padding: 40px 0;">
         <?php if($isLoggedIn): ?>
             
-            <!-- VIEW 1: THE MAIN DASHBOARD -->
             <div id="dashboardView">
                 <div class="sunlight-header-banner">
                     <h1>Welcome back, <?= htmlspecialchars($userInfo['users_firstName']) ?>!</h1>
                 </div>
 
-                <!-- Profile & Loyalty Cards -->
                 <div class="sunlight-card-row">
                     <div class="sunlight-profile-card">
                         <div class="profile-info">
@@ -228,7 +225,6 @@ if ($isLoggedIn) {
 
                 <h2 class="sunlight-section-title">My Bookings</h2>
 
-                <!-- Upcoming Trips -->
                 <h3 class="sunlight-subsection-title">Upcoming trips</h3>
                 <div class="sunlight-trips-card">
                     <?php if (empty($upcomingTrips)): ?>
@@ -264,7 +260,6 @@ if ($isLoggedIn) {
                     <?php endif; ?>
                 </div>
 
-                <!-- Past Trips -->
                 <h3 class="sunlight-subsection-title">Past trips</h3>
                 <div class="sunlight-trips-card">
                     <?php if (empty($pastTrips)): ?>
@@ -298,7 +293,6 @@ if ($isLoggedIn) {
                     <?php endif; ?>
                 </div>
 
-                <!-- Recommendations -->
                 <h2 class="sunlight-section-title">You may be interested in:</h2>
                 <div class="sunlight-recommendations">
                     <div class="rec-card">
@@ -312,7 +306,6 @@ if ($isLoggedIn) {
                 </div>
             </div>
 
-            <!-- VIEW 2: UPDATE PROFILE FORM (Hidden by default) -->
             <div id="profileView" style="display: none;">
                 <h2 class="sunlight-section-title">Update Profile</h2>
                 
@@ -403,7 +396,6 @@ if ($isLoggedIn) {
             </div>
 
         <?php else: ?>
-            <!-- GUEST: INVITE TO LOG IN -->
             <div style="text-align: center; padding: 100px 20px; background: white; border-radius: 12px; border: 1px solid #E2E8F0;">
                 <i class="fa-solid fa-earth-americas" style="font-size: 4rem; color: #005A9C; margin-bottom: 20px;"></i>
                 <h1 style="color: var(--nav-dark);">Want to explore the world?</h1>
@@ -413,7 +405,6 @@ if ($isLoggedIn) {
         <?php endif; ?>
     </main>
 
-    <!-- FOOTER -->
     <footer class="skyzen-footer">
         <div class="footer-bottom-bar">
             <div class="footer-bottom-container">
